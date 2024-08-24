@@ -164,6 +164,186 @@ section{
 
 /* End Home Profile */
 
+/* Start About */
+
+#about{
+    position: relative;
+}
+.section_pic-container2{
+    display: flex;
+    height: 450px;
+    width: 400px;
+    margin: auto 0; 
+}
+.section_pic-container2 img{
+    border-radius: 10%;
+    border: rgb(53,53,53) 0.1 solid;
+    box-shadow: 10px 5px 24px rgb(53,53,53);
+}
+.about-containers{
+    gap: 2rem;
+    /* margin-top: 2rem; */
+    margin-bottom: 2rem;
+}
+.about-details-container{
+    justify-content: center;
+    flex-direction: column;
+}
+.about-containers, 
+.about-details-container{
+    display: flex;
+}
+.about-pic{
+    border-radius: 2rem;
+}
+.arrow{
+    position: absolute;
+    right: -5rem;
+    bottom: 1.6rem;
+}
+.details-container{
+    padding: 1.5rem;
+    flex: 1;
+    background: white;
+    border-radius: 2rem;
+    border: rgb(53,53,53) 0.1rem solid;
+    border-color: rgb(163,163,163);
+    text-align: center;
+}
+.section-container{
+    gap: 4rem;
+    height: 80%;
+}
+
+
+/* End About Work */
+
+/* Start Experience */
+
+#experience{
+    position: relative;
+}
+
+.experience-sub-title{
+    color: rgb(85,85,85);
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+}
+.experience-details-container{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.article-container{
+    display: flex;
+    text-align: initial;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 2.5rem;
+    justify-content: space-around;
+}
+
+.title2{
+   padding-bottom: 20px;
+}
+
+article{
+    display: flex;
+    width: 10rem;
+    justify-content: space-around;
+    gap: 0.5rem;
+}
+
+article .icon{
+    cursor: default;
+}
+
+/* End Experience */
+
+/* Start Projects */
+
+#project{
+    position: relative;
+}
+
+.color-container{
+    border-color: rgb(163,163,163);
+    background: rgb(250,250,250);
+}
+.about-containers2{
+    gap: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+}
+.project-img{
+    border-radius: 2rem;
+    width: 100%;
+    height: 38vh;
+}
+.project-title{
+    margin: 1rem;
+    color: black;
+}
+.project-btn{
+    color: black;
+    border-color: rgb(163,163,163);
+}
+.project-containers{
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* End Projects */
+
+/* Start Contact */
+#contact{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 70vh;
+}
+.contact-info-upper-container{
+    display: flex;
+    justify-content: center;
+    border-radius: 2rem;
+    border: rgb(53,53,53) 0.1rem solid;
+    border-color: rgb(163,163,163);
+    background: rgb(250,250,250);
+    margin: 2rem auto;
+    padding: 0.5rem;
+}
+.contact-info-container{
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem;
+    cursor: pointer;
+}
+.contact-info-container p{
+    font-size: larger;
+}
+.email-icon{
+    height: 2.5rem;
+}
+/* End Contact */
+
+/* Start Footer*/
+/* footer{
+    height: 25vh;
+} */
+footer p{
+    text-align: center;
+    padding-block: 20px;
+    box-shadow: 5px 0 14px  rgb(163,163,163);
+}
+
+/* End Footer*/
+
+
 
 
 
