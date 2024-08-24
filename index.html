@@ -1,78 +1,121 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Portfolio</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./mediaqueries.css">
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./mediaqueries.css" />
+  </head>
 
-</head>
+  <body>
+    <!-- Satrt Navbar -->
 
-<body>
-
-<!-- Satrt Navbar -->
-  
-<!-- For desktop Navbar-->
+    <!-- For desktop Navbar-->
 
     <nav id="desktop-nav">
 
-        <div class="logo">
-            <img src="./assets/Sk Code.png">
-        </div>
+      <div class="logo">
+        <img src="./assets/Sk Code.png" />
+      </div>
 
-        <div>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#project">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </div>
+      <div>
 
+        <ul class="nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#project">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+      </div>
     </nav>
 
+    <!-- End Navbar -->
 
-<!-- End nav -->
+    <!-- Start Home -->
 
+    <section id="profile">
 
-<!-- Start Home -->
+      <div class="section_pic-container">
+        <img src="./assets/shahzain.jpg" alt="Shahzain khan Profile picture" />
+      </div>
 
-<section id="profile">
-
-    <div class="section_pic-container">
-        <img src="./assets/shahzain.jpg" alt="Shahzain khan Profile picture">
-    </div>
-
-    <div class="section_text">
+      <div class="section_text">
 
         <p class="section_text_p1">Hello, I'm</p>
         <h1 class="title">Shahzain khan</h1>
         <p class="section_text_p2">Frontend Developer</p>
 
-
         <div class="btn-container">
-            <button class="btn1 btn-color-2" onclick="window.open('./assets/Shahzain khan.pdf')">Download CV</button>
-            <button class="btn1 btn-color-1" onclick="location.href='#contact'">Contact Info</button>
+          <button class="btn1 btn-color-2" id="downloadCV">Download CV</button>
+          <button class="btn1 btn-color-1" id="Contact">Contact Info</button>
         </div>
 
         <div class="social_container">
-            <img onclick="window.open('https://www.linkedin.com/in/shahzainkhan/')" src="./assets/linkedin.png" alt="Linkedin icon" class="icon">
-            <img onclick="window.open('https://github.com/Shahzain333')" src="./assets/github.png" alt="Github icon" class="icon">
+          <img id="linkedin" src="./assets/linkedin.png" alt="Linkedin icon" class="icon"/>
+          <img id="github" src="./assets/github.png" alt="Github icon" class="icon"/>
         </div>
 
-    </div>
+      </div>
 
-</section>
-<!-- End Home -->
+    </section>
+
+    <!-- End Home -->
+
+    <!-- Start About -->
+
+    <section id="about">
+
+      <p class="section_text_p1">Get To know More</p>
+      <h1 class="title">About Me</h1>
+
+      <div class="section-container">
+
+        <div class="section_pic-container2">
+          <img src="./assets/shahzain.jpg" alt="profile pic" class="about-pic"/>
+        </div>
+
+        <div class="about-details-container">
+
+          <div class="about-containers">
+
+            <div class="details-container">
+              <img src="./assets/experience icon.png" alt="Experience icon" class="icon"/>
+              <h3>Experiences</h3>
+              <p>2+ years <br />Frontend Developement</p>
+            </div>
+
+            <div class="details-container">
+              <img src="./assets/education icon.png" alt="Education icon" class="icon"/>
+              <h3>Education</h3>
+              <p>B.Sc. Bachelor's Degree<br />M.Sc. Master Degree</p>
+            </div>
+
+          </div>
+
+          <div class="text-container">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil
+              accusamus laborum reprehenderit cupiditate. Culpa minus tenetur id
+              saepe voluptatem voluptatum illum dignissimos possimus quibusdam
+              modi iure fugiat dolor facere quia, at quas velit consequatur aut
+              molestias! Ea, veniam reiciendis quod facilis consequuntur
+              exercitationem esse pariatur cum nostrum asperiores earum.
+              Dolores!
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+      <img src="./assets/down-arrow.png" alt="Arrow icon" class="icon arrow" onclick="location.href='#experience'"/>
+    
+    </section>
+
+    <!-- End About -->
 
    
-
-<!-- End Footer -->
-
-<script src="./script.js"></script>
-
-</body>
-
+    <script src="./script.js"></script>
+  </body>
 </html>
