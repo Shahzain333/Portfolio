@@ -25,7 +25,7 @@ a, .btn{
 /* Start navbar  */
 
 nav, .nav-links{
-   display: flex;
+   display: flex ;
 }
 
 nav{
@@ -40,10 +40,14 @@ nav{
     font-size: 1.5rem;
 }
 
-a{
+.nav-links a{
     color: black;
     text-decoration: none;
     text-decoration-color: white;
+    transition: 0.3s;
+    opacity: 0;
+    animation: slideLeft 0.5s ease forwards;
+    animation-delay: calc(.4s * var(--i));
 }
 
 a:hover{
@@ -56,10 +60,31 @@ a:hover{
 .logo img{
     width: 100%;
     height: 10vh;
+    cursor: default;
+    opacity: 0;
+    animation: slideRight 1s ease forwards;
 }
 
-.logo:hover{
-    cursor: pointer;
+@keyframes slideRight {
+    0% {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0px);
+        opacity: 1;
+    }
+}
+
+@keyframes slideTop {
+    0% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
 }
 
 /* End navbar */
@@ -81,7 +106,7 @@ section{
 #profile{
     display: flex;
     justify-content: center;
-    gap: 3rem;
+    gap: 10rem;
     height: 80vh;
 }
 
@@ -105,10 +130,27 @@ section{
 
 .section_text p{
     font-weight: 600;
+    opacity: 0;
+    animation: slideBottom 1s ease forwards;
+    animation-delay: 0.7s;
+}
+
+.section_text p:nth-of-type(2){
+    margin-bottom: 30px;
+    animation: slideTop 1s ease forwards;
+    animation-delay: .7s;
+}
+
+.section_text p span {
+    color: black;
 }
 
 .title{
     font-size: 3rem;
+    font-weight: 700;
+    opacity: 0;
+    animation: slideRight 1s ease forwards;
+    animation-delay: 1s;
 }
 
 .section_text_p2{
@@ -117,17 +159,35 @@ section{
 }
 /* Social */
 .social_container{
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    margin-top: 1rem;
+    margin-top: 1.2rem;
     gap: 1rem;
 }
-/* Icon */
-.icon{
+
+.social_container a {
     cursor: pointer;
-    height: 5vh;
+    width: 40px;
+    height: 40px;
+    font-size: 27px;
+    color: black;
+    background: transparent;
+    border-radius: 50%;
+    border: 2px solid (181,181,181);
+    box-shadow: 0 0 5px rgb(53,53,53);
+    transition: .5s ease;
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: calc(.2s * var(--i));
 }
+.social_container a:hover{
+    color: black;
+    background: rgb(181,181,181);
+    box-shadow: 0 0 5px rgb(181,181,181),
+    0 0 25px rgb(181,181,181), 0 0 50px rgb(181,181,181),
+    0 0 100px rgb(181,181,181), 0 0 200px rgb(181,181,181)
+} 
 /* Buttons */
 .btn-container{
     display: flex;
@@ -141,25 +201,56 @@ section{
     padding: 1rem;
     width: 8rem;
     border-radius: 2rem;
+    transition: .5s ease;
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: calc(.2s * var(--i));
 }
-.btn-color-2, .btn-color-1{
-    border: rgb(53,53,53) 0.1 solid;
-}
-.btn-color-2:hover, .btn-color-1:hover{
-    cursor: pointer;
-}
-.btn-color-2:hover, .btn-color-1{
+.btn-color-1{
     background: rgb(53,53,53);
     color: white;
-}
-.btn-color-1:hover{
-    background: rgb(0,0,0);
+    border: rgb(53,53,53) 0.1 solid;
 }
 .btn-color-2{
-    background: none;
+    border: rgb(53,53,53) 0.1 solid;
 }
 .btn-color-2:hover{
-    border: rgb(255,255,255) 0.1rem solid;
+    cursor: pointer;
+    background: rgb(53,53,53);
+    color: white;
+    border: rgb(181,181,181) 0.1rem solid;
+    box-shadow: 0 0 5px rgb(181,181,181),
+    0 0 25px rgb(181,181,181), 0 0 50px rgb(181,181,181),
+    0 0 100px rgb(181,181,181), 0 0 200px rgb(181,181,181)
+}
+.btn-color-1:hover{
+    cursor: pointer;
+    background: rgb(0,0,0);
+    box-shadow: 0 0 5px rgb(181,181,181),
+    0 0 25px rgb(181,181,181), 0 0 50px rgb(181,181,181),
+    0 0 100px rgb(181,181,181), 0 0 200px rgb(181,181,181)
+}
+
+@keyframes slideBottom {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
+
+@keyframes slideLeft {
+    0% {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0px);
+        opacity: 1;
+    }
 }
 
 /* End Home Profile */
@@ -196,6 +287,15 @@ section{
 .about-pic{
     border-radius: 2rem;
 }
+/* Icon */
+.icon{
+    cursor: pointer;
+    height: 5vh;
+    transition: .5s ease;
+    opacity: 0;
+    animation: slideLeft 1s ease forwards;
+    animation-delay: calc(.2s * var(--i));
+}
 .arrow{
     position: absolute;
     right: -5rem;
@@ -214,7 +314,62 @@ section{
     gap: 4rem;
     height: 80%;
 }
-
-
 /* End About Work */
+
+/* Start Experience */
+
+#experience{
+    position: relative;
+}
+
+.experience-sub-title{
+    color: rgb(85,85,85);
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+}
+.experience-details-container{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.article-container{
+    display: flex;
+    text-align: initial;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 2.5rem;
+    justify-content: space-around;
+}
+
+.title2{
+   padding-bottom: 20px;
+}
+
+article{
+    display: flex;
+    width: 10rem;
+    justify-content: space-around;
+    gap: 0.5rem;
+}
+
+article .icon{
+    cursor: default;
+}
+
+/* End Experience */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
