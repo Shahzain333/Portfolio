@@ -1,16 +1,20 @@
 import express, { urlencoded } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import authRoutes from './routes/authRoutes.js';
+//import projectRouter from './routes/projectRoutes.js';
+//import experienceRouter from './routes/experienceRoutes.js';
 
 const app = express();
 
 // cors middleware for all request
-app.use(
-    cors({
-        origin: process.env.CORS_ORIGINS,
-        credentials: true
-    })
-);
+app.use(cors({
+    origin: `${process.env.CLIENT_SIDE_URL}`,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}))
 
 // common middleware
 app.use(
@@ -29,7 +33,7 @@ app.get("/", (req, res) => {
 });
 
 // user routes
-// app.use("/api/v1/users", userRouter);
+app.use('/api/v1/auth', authRoutes)
 //app.use("/api/v1/projects", projectRouter);
 //app.use("/api/v1/experience", experienceRouter);
 
