@@ -48,7 +48,7 @@ export const handleAdminLogin = async(req,res) => {
 }
 
 // Logout User
-export const handleUserLogout = async(req,res) => {
+export const handleAdminLogout = async(req,res) => {
     try {
         res.clearCookie("token")
         return res.json({ message: "User logged out successfully", success: true })

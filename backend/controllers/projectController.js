@@ -2,6 +2,7 @@ import projectModel from '../models/Project.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiErrorResponse from '../utils/apiErrorResponse.js';
 import APIResponse from '../utils/apiResponse.js';
+import { uploadImage, deleteImage } from '../utils/imageKit.js';
 
 const addProject = asyncHandler( async (req, res) => {
     
@@ -30,8 +31,10 @@ const addProject = asyncHandler( async (req, res) => {
     })
 
     try {
+        
         // validate if project with same title already exists
         const isProjectExists = await ProjectModel.findOne({ title: title.trim() });
+
         if (isProjectExists) {
             return res.status(409).json(new ApiErrorResponse(409, "Project with same title already exists"));
         }
