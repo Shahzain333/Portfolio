@@ -184,14 +184,82 @@ const deleteProject = asyncHandler( async (req, res) => {
 
 const getAllProjects = asyncHandler(async (req, res) => {
 
-    const projects = await ProjectModel.find();
+    // Fetch project from database through pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    if (!projects || projects.length === 0) {
-        return res.status(404).json(new ApiErrorResponse(404, "No projects found"));
+    // pagination validation
+    if (page < 1 || limit < 1) {
+        return res.status(400).json(new ApiErrorResponse(400, "Invalid pagination parameters"));
     }
 
-    return res.status(200).json(new APIResponse(200, projects, "Projects fetched successfully"));
+    try {
+        
+        const [projects, totalProjects] = await Promise.all([
+            projectModel.find().skip(skip).limit(limit).lean(),
+            projectModel.countDocuments()
+        ])
+
+        const totalPages = Math.ceil(totalProjects / limit);
+
+        return res.status(200).json(new APIResponse(200, {
+            projects,
+            pagination: {
+                totalProjects,
+                totalPages,
+                currentPage: page,
+                pageSize: limit
+            }
+        }, "Projects fetched successfully"));
+
+    } catch (error) {
+        console.error("Error fetching projects:", error);
+        return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while fetching projects"));
+    }
+
+    // const projects = await ProjectModel.find();
+
+    // if (!projects || projects.length === 0) {
+    //     return res.status(404).json(new ApiErrorResponse(404, "No projects found"));
+    // }
+
+    // return res.status(200).json(new APIResponse(200, projects, "Projects fetched successfully"));
 
 });
 
-export { addProject, updateProject, deleteProject, getAllProjects };
+const searchProject = asyncHandler( async (req, res) => {
+
+    const { query } = req.params;
+    console.log("Search query:", query);
+
+    if(!query || query.trim() === '') {
+        return res.status(400).json(new ApiErrorResponse(400, "Search query is required"));
+    }
+
+    // pagination validation
+    try {
+        // Perform case-insensitive search for projects by title
+        // lean() is used to get plain JavaScript objects instead of Mongoose documents
+        const projects = await ProjectModel.findOne({ title: {
+            $regex: query,
+            $options: 'i'
+        }}).lean();
+
+        // handle empty results
+        if (!projects || projects.length === 0) {
+            return res.status(404).json(new ApiErrorResponse(404, "No projects found matching your search"));
+        }
+
+        console.log("Found projects:", projects);
+        
+        return res.status(200).json(new APIResponse(200, projects, "Project Data fetched successfully"));
+
+    } catch (error) {
+        console.error("Error searching projects:", error);
+        return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while searching projects"));
+    }
+
+});
+
+export { addProject, updateProject, deleteProject, getAllProjects, searchProject };

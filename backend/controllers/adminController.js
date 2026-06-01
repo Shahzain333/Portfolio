@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import asyncHandler from 'express-async-handler'
-import { APIResponse, ApiErrorResponse } from '../utils/APIResponse.js'
+import APIResponse from '../utils/APIResponse.js'
+import ApiErrorResponse from '../utils/apiErrorResponse.js'
 
 // Admin Login
 export const handleAdminLogin = asyncHandler(async (req, res) => {
