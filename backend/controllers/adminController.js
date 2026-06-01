@@ -1,77 +1,68 @@
-import User from '../models/user.js'
 import jwt from 'jsonwebtoken'
-import bcrypt from 'bcryptjs'
-import { v2 as cloudinary } from 'cloudinary'
-import { sendOtpEmail } from '../utils/sendTransactionalEmails.js'
-import crypto from 'node:crypto'
+import asyncHandler from 'express-async-handler'
+import { APIResponse, ApiErrorResponse } from '../utils/APIResponse.js'
 
 // Admin Login
-export const handleAdminLogin = async(req,res) => {
+export const handleAdminLogin = asyncHandler(async (req, res) => {
     try {
 
         const { email, password } = req.body
 
         if(!email || !password) {
-            return res.json({ message: "Please fill all the fields", success: false })
+            return res.status(400).json(new ApiErrorResponse(400, "Please fill all the fields"))
         }
 
         const adminEmail = process.env.ADMIN_EMAIL
         const adminPassword = process.env.ADMIN_PASSWORD
 
         if(email !== adminEmail || password !== adminPassword) {
-            return res.json({ message: "Invalid Credentials", success: false })
+            return res.status(401).json(new ApiErrorResponse(401, "Invalid Credentials"))
         }
 
-        const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+        const adminToken = jwt.sign({ email }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRY
         })
 
-        res.cookie("token", token, {
+        res.cookie("adminToken", adminToken, {
             httpOnly: true,
             secure: true,
             sameSite: "none",
             maxAge: 24*60*60*1000
         })
 
-        return res.json({ 
-            success: true,
-            message: "Admin logged in successfully", 
-            admin: {
-                admin: adminEmail
-            },
-        })
+        return res.status(200).json(new APIResponse(200, { admin: adminEmail }, "Admin logged in successfully"))
 
     } catch (error) {
         console.log("Error in HandleAdminLoginUser : ",error.message)
-        return res.json({ message: "Internal server error", success: false })
+        return res.status(500).json(new ApiErrorResponse(500, "Internal server error"))
     }
-}
+})
 
 // Logout User
-export const handleAdminLogout = async(req,res) => {
+export const handleAdminLogout = asyncHandler(async (req, res) => {
     try {
-        res.clearCookie("token")
-        return res.json({ message: "User logged out successfully", success: true })
+        res.clearCookie("adminToken")
+        return res.status(200).json(new APIResponse(200, null, "Admin logged out successfully"))
     } catch (error) {
-        console.log("Error in HandleLogoutUser : ",error.message)
-        return res.json({ message: "Internal server error", success: false })
+        console.log("Error in HandleAdminLogout : ",error.message)
+        return res.status(500).json(new ApiErrorResponse(500, "Internal server error"))
     }
-}
+})
 
-export const handleIsAuthAdmin = async(req,res) => {
+export const handleIsAuthAdmin = asyncHandler(async (req, res) => {
     try {
 
-        const { email } = req.user
+        const { email } = req.body
 
         if (email !== process.env.ADMIN_EMAIL) {
-            return res.json({ success: false, message: "Not authorized Admin" })
+            return res.status(401).json(new ApiErrorResponse(401, "Not authorized Admin"))
         }
 
-        res.json({ success: true })
+        res.status(200).json(new APIResponse(200, null, "Admin is authorized"))
 
     } catch (error) {
         console.log("Error in isAdmin : ", error.message)
-        return res.json({ message: "Internal server error", success: false })
+        return res.status(500).json(new ApiErrorResponse(500, "Internal server error"))
     }
-}
+})
 

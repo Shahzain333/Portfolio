@@ -3,8 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
-//import projectRouter from './routes/projectRoutes.js';
-//import experienceRouter from './routes/experienceRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 
 const app = express();
 
@@ -34,8 +33,7 @@ app.get("/", (req, res) => {
 
 // user routes
 app.use('/api/v1/auth', authRoutes)
-//app.use("/api/v1/projects", projectRouter);
-//app.use("/api/v1/experience", experienceRouter);
+app.use("/api/v1/projects", projectRoutes);
 
 // testing middleware of auth
 // import { authMiddleware } from './middlewares/authMiddleware.js';
@@ -46,6 +44,7 @@ app.use('/api/v1/auth', authRoutes)
 
 // Error handler 
 app.use((err, req, res, next) => {
+
     console.error(err); 
 
     const statusCode = err.statusCode || 500;

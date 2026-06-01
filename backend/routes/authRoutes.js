@@ -1,6 +1,6 @@
 import express from 'express'
 import { handleAdminLogin, handleAdminLogout, handleIsAuthAdmin } from '../controllers/adminController.js'
-import { protect } from '../middlewares/authMiddleware.js'
+import { protect } from '../middlewares/authMiddlewares.js'
 
 const authRoutes = express.Router()
 

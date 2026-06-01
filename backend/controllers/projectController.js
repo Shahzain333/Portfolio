@@ -1,4 +1,4 @@
-import projectModel from '../models/Project.js';
+import projectModel from '../models/project.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiErrorResponse from '../utils/apiErrorResponse.js';
 import APIResponse from '../utils/apiResponse.js';
@@ -40,9 +40,14 @@ const addProject = asyncHandler( async (req, res) => {
         }
 
         // Add project data to database
-        const project = await ProjectModel.create(
-            { title, description, category, projectUrl, sourceCodeUrl, status }
-        );
+        const project = await ProjectModel.create({ 
+            title, 
+            description, 
+            category, 
+            projectUrl, 
+            sourceCodeUrl, 
+            status 
+        });
 
         // upload image to ImageKit
         const ImagePath = req.file?.path;
@@ -74,4 +79,119 @@ const addProject = asyncHandler( async (req, res) => {
 
 });
 
-export { addProject };
+const updateProject = asyncHandler( async (req, res) => {
+
+    const projectId = req.params.id;
+    const { title, description, category, projectUrl, sourceCodeUrl, status } = req.body;
+
+    // validate project existence
+    const project = await ProjectModel.findById(projectId);
+    
+    if (!project) {
+        return res.status(404).json(new ApiErrorResponse(404, "Project not found"));
+    }
+
+    // update project data
+    project.title = title || project.title;
+    project.description = description || project.description;
+    project.category = category || project.category;
+    project.projectUrl = projectUrl || project.projectUrl;
+    project.sourceCodeUrl = sourceCodeUrl || project.sourceCodeUrl;
+    project.status = status || project.status;
+
+    // save updated project
+    try {
+
+        // delete the previous uploaded file
+        if (project.imageId) {
+            const deleteResponse = await deleteImage(project.imageId);
+            console.log("Previous image deletion response:", deleteResponse);
+            
+            if (!deleteResponse) {
+                return res.status(500).json(new ApiErrorResponse(500, "Previous image deletion failed"));
+            }
+
+        }
+
+        // upload image to ImageKit
+        const ImagePath = req.file?.path;
+        
+        if (ImagePath) {
+
+            const imageUploadResponse =  await uploadImage(ImagePath);
+            console.log("Image upload response:", imageUploadResponse);
+            
+            if (imageUploadResponse) {
+            
+                project.imageUrl = imageUploadResponse.url;
+                project.imageId = imageUploadResponse.fileId;
+                await project.save();
+            
+            }else {
+                return res.status(500).json(new ApiErrorResponse(500, "Image upload failed"));
+            }
+
+        }
+
+    } catch (error) {
+        console.error("Error updating project:", error);
+        return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while updating project"));
+    }
+
+    return res.status(200).json(new APIResponse(200, project, "Project updated successfully"));
+
+});
+
+const deleteProject = asyncHandler( async (req, res) => {
+    
+    const projectId = req.params.id;
+
+    // validations
+    if (!projectId) {
+        return res.status(400).json(new ApiErrorResponse(400, "Project ID is required"));
+    }
+
+    // validate project existence
+    const project = await ProjectModel.findById(projectId);
+    if (!project) {
+        return res.status(404).json(new ApiErrorResponse(404, "Project not found"));
+    }
+
+    // delete project
+    try {
+     
+        const projectImageId = project.imageId;
+     
+        const dbResp = await ProjectModel.findByIdAndDelete(projectId);
+     
+        // delete image from ImageKit
+        if (projectImageId && dbResp) {
+            const deleteResponse = await deleteImage(projectImageId);
+            console.log("Project image deletion response:", deleteResponse);
+            if (!deleteResponse) {
+                return res.status(500).json(new ApiErrorResponse(500, "Project image deletion failed"));
+            }
+        }
+        
+        // Return success response
+        return res.status(200).json(new APIResponse(200, {}, "Project deleted successfully"));
+    
+    } catch (error) {
+        return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while deleting project"));
+    }
+
+});
+
+const getAllProjects = asyncHandler(async (req, res) => {
+
+    const projects = await ProjectModel.find();
+
+    if (!projects || projects.length === 0) {
+        return res.status(404).json(new ApiErrorResponse(404, "No projects found"));
+    }
+
+    return res.status(200).json(new APIResponse(200, projects, "Projects fetched successfully"));
+
+});
+
+export { addProject, updateProject, deleteProject, getAllProjects };
