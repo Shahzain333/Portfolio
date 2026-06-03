@@ -4,6 +4,8 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
+import experienceRoutes from './routes/experienceRoutes.js';
+import skillRoutes from './routes/skillRoutes.js';
 
 const app = express();
 
@@ -34,13 +36,8 @@ app.get("/", (req, res) => {
 // user routes
 app.use('/api/v1/auth', authRoutes)
 app.use("/api/v1/projects", projectRoutes);
-
-// testing middleware of auth
-// import { authMiddleware } from './middlewares/authMiddleware.js';
-// app.get("/test-middleware", authMiddleware, (req, res) => {
-//     res.send("Middleware tested successfully");
-// });
-
+app.use("/api/v1/experiences", experienceRoutes);
+app.use("/api/v1/skills", skillRoutes);
 
 // Error handler 
 app.use((err, req, res, next) => {
