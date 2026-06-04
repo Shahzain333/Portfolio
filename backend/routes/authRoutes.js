@@ -1,11 +1,12 @@
 import express from 'express'
-import { handleAdminLogin, handleAdminLogout, handleIsAuthAdmin } from '../controllers/adminController.js'
-import { protect } from '../middlewares/authMiddlewares.js'
+import { handleAdminLogin, handleAdminLogout, handleIsAuthAdmin, handleRefreshToken } from '../controllers/adminController.js'
+import { adminOnly } from '../middlewares/authMiddlewares.js'
 
 const authRoutes = express.Router()
 
-authRoutes.post('/admin/logout', protect, handleAdminLogout)
 authRoutes.post('/admin/login', handleAdminLogin)
-authRoutes.get('/is-admin', protect, handleIsAuthAdmin)
+authRoutes.post('/admin/logout', adminOnly, handleAdminLogout)
+authRoutes.get('/is-admin', adminOnly, handleIsAuthAdmin)
+//authRoutes.post('/admin/refresh',adminOnly, handleRefreshToken)
 
 export default authRoutes

@@ -3,7 +3,7 @@ class ApiErrorResponse {
         this.statusCode = statusCode
         this.message = message
         this.success = false
-        this.timestamp = new Date().toISOString
+        this.timestamp = new Date().toISOString()
     }
 }
 

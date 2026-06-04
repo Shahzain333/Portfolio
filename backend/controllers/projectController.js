@@ -1,4 +1,4 @@
-import projectModel from '../models/project.js';
+import projectModel from '../models/Project.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiErrorResponse from '../utils/apiErrorResponse.js';
 import APIResponse from '../utils/apiResponse.js';
@@ -125,11 +125,12 @@ const updateProject = asyncHandler( async (req, res) => {
             
                 project.imageUrl = imageUploadResponse.url;
                 project.imageId = imageUploadResponse.fileId;
-                await project.save();
             
             }else {
                 return res.status(500).json(new ApiErrorResponse(500, "Image upload failed"));
             }
+
+            await project.save();
 
         }
 
@@ -241,7 +242,7 @@ const searchProject = asyncHandler( async (req, res) => {
     try {
         // Perform case-insensitive search for projects by title
         // lean() is used to get plain JavaScript objects instead of Mongoose documents
-        const projects = await ProjectModel.findOne({ title: {
+        const projects = await ProjectModel.find({ title: {
             $regex: query,
             $options: 'i'
         }}).lean();
