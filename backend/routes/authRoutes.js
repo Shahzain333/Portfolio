@@ -5,8 +5,8 @@ import { adminOnly } from '../middlewares/authMiddlewares.js'
 const authRoutes = express.Router()
 
 authRoutes.post('/admin/login', handleAdminLogin)
+authRoutes.post('/admin/refresh', handleRefreshToken)
 authRoutes.post('/admin/logout', adminOnly, handleAdminLogout)
 authRoutes.get('/is-admin', adminOnly, handleIsAuthAdmin)
-//authRoutes.post('/admin/refresh',adminOnly, handleRefreshToken)
 
 export default authRoutes

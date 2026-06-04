@@ -9,7 +9,7 @@ import bcrypt from 'bcryptjs'
 const cookieOptions = {
     httpOnly: true,  // JS cannot access — prevents XSS attacks
     secure: true,   // HTTPS only
-    sameSite: "none", // needed for cross-origin requests
+    sameSite: "none", // needed for cross-origin (frontend/backend on different domains)
 }
 
 // Admin Login
@@ -75,7 +75,7 @@ export const handleAdminLogout = asyncHandler(async (req, res) => {
 })
 
 // Refresh Access Token
-const handleRefreshToken = asyncHandler(async (req, res) => {
+export const handleRefreshToken = asyncHandler(async (req, res) => {
     
     const token = req.cookies?.refreshToken;
 

@@ -13,8 +13,9 @@ export const adminOnly = (req,res,next) => {
     }
 
     try {
-        
-        const decoded = verifyAccessToken(token);
+        // verify directly here — NOT through verifyToken utility
+        // verifyToken utility returns null on error which crashes decoded.email access
+        const decoded = jwt.verify(token.trim(), process.env.ACCESS_TOKEN_SECRET);
         
         // double check email matches admin
         if (decoded.email !== process.env.ADMIN_EMAIL) {
