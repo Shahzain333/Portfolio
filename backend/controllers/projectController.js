@@ -1,183 +1,187 @@
-import projectModel from '../models/Project.js';
+import ProjectModel from '../models/Project.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiErrorResponse from '../utils/apiErrorResponse.js';
 import APIResponse from '../utils/apiResponse.js';
 import { uploadImage, deleteImage } from '../utils/imageKit.js';
 
-const addProject = asyncHandler( async (req, res) => {
-    
+const addProject = asyncHandler(async (req, res) => {
+
     const { title, description, category, projectUrl, sourceCodeUrl, status } = req.body;
 
-    const valFields = [title, description, projectUrl, sourceCodeUrl, status];
-    
-    // validate category
-    const validCategories = ['frontend', 'backend', 'fullstack', 'mernstack', 'gen-ai', 'agent', 'other'];
-    
-    if (category) {
-        for (const key in validCategories) {
-            if (category[key] !== category[key]) {
-                return res.status(400).json(new ApiErrorResponse(400, "Invalid category value"));
-           }
+    const requiredFields = { title, description, projectUrl, sourceCodeUrl, status }
+
+    for (const [key, value] of Object.entries(requiredFields)) {
+        if (!value || value.toString().trim() === '') {
+            return res.status(400).json(new ApiErrorResponse(400, `${key} is required`));
         }
-    }else {
+    }
+
+    const validCategories = ['frontend', 'backend', 'fullstack', 'mernstack', 'gen-ai', 'agent', 'other'];
+
+    if (!category) {
         return res.status(400).json(new ApiErrorResponse(400, "Category is required"));
     }
 
-    // Validate required fields
-    valFields.forEach( (field) => {
-        if (field?.trim() === '' || field == null || field == undefined) {
-           return res.status(400).json(new ApiErrorResponse(400, "All fields are required"+ field));
-        }
-    })
+    if (!validCategories.includes(category)) {
+        return res.status(400).json(new ApiErrorResponse(400, `Invalid category. Allowed: ${validCategories.join(', ')}`));
+    }
+
+    // image is required when adding a new project
+    const imagePath = req.file?.path;
+    if (!imagePath) {
+        return res.status(400).json(new ApiErrorResponse(400, "Project image is required"));
+    }
 
     try {
-        
-        // validate if project with same title already exists
+
         const isProjectExists = await ProjectModel.findOne({ title: title.trim() });
 
         if (isProjectExists) {
             return res.status(409).json(new ApiErrorResponse(409, "Project with same title already exists"));
         }
 
-        // Add project data to database
-        const project = await ProjectModel.create({ 
-            title, 
-            description, 
-            category, 
-            projectUrl, 
-            sourceCodeUrl, 
-            status 
+        // upload image BEFORE creating project, so we have imageUrl ready
+        const imageUploadResponse = await uploadImage(imagePath);
+        console.log("Image upload response:", imageUploadResponse);
+
+        if (!imageUploadResponse) {
+            return res.status(500).json(new ApiErrorResponse(500, "Image upload failed"));
+        }
+
+        // create project with image data from upload response
+        const project = await ProjectModel.create({
+            title,
+            description,
+            category,
+            projectUrl,
+            sourceCodeUrl,
+            status,
+            imageUrl: imageUploadResponse.url,
+            imageId:  imageUploadResponse.fileId
         });
 
-        // upload image to ImageKit
-        const ImagePath = req.file?.path;
-       
-        if (ImagePath) {
-       
-            const imageUploadResponse =  await uploadImage(ImagePath);
-            console.log("Image upload response:", imageUploadResponse);
-
-            if (imageUploadResponse) {
-                
-                project.imageUrl = imageUploadResponse.url;
-                project.imageId = imageUploadResponse.fileId;
-                await project.save();
-
-            }else {
-                return res.status(500).json(new ApiErrorResponse(500, "Image upload failed"));
-            }
-
-        }
-        
-        // Return success response
         return res.status(201).json(new APIResponse(201, project, "Project added successfully"));
 
     } catch (error) {
         console.error("Error adding project:", error);
-        return res.status(500).json(new ApiErrorResponse(500, "Somthing went wrong while adding project"));
+        return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while adding project"));
     }
 
 });
 
-const updateProject = asyncHandler( async (req, res) => {
+const updateProject = asyncHandler(async (req, res) => {
 
     const projectId = req.params.id;
     const { title, description, category, projectUrl, sourceCodeUrl, status } = req.body;
 
     // validate project existence
     const project = await ProjectModel.findById(projectId);
-    
+
     if (!project) {
         return res.status(404).json(new ApiErrorResponse(404, "Project not found"));
     }
 
-    // update project data
-    project.title = title || project.title;
-    project.description = description || project.description;
-    project.category = category || project.category;
-    project.projectUrl = projectUrl || project.projectUrl;
-    project.sourceCodeUrl = sourceCodeUrl || project.sourceCodeUrl;
-    project.status = status || project.status;
+    // validate category if provided
+    if (category) {
 
-    // save updated project
-    try {
-
-        // delete the previous uploaded file
-        if (project.imageId) {
-            const deleteResponse = await deleteImage(project.imageId);
-            console.log("Previous image deletion response:", deleteResponse);
-            
-            if (!deleteResponse) {
-                return res.status(500).json(new ApiErrorResponse(500, "Previous image deletion failed"));
-            }
-
+        const validCategories = ['frontend', 'backend', 'fullstack', 'mernstack', 'gen-ai', 'agent', 'other'];
+        
+        if (!validCategories.includes(category)) {
+            return res.status(400).json(new ApiErrorResponse(400, `Invalid category. Allowed: ${validCategories.join(', ')}`));
         }
 
-        // upload image to ImageKit
-        const ImagePath = req.file?.path;
-        
-        if (ImagePath) {
+    }
 
-            const imageUploadResponse =  await uploadImage(ImagePath);
+    // update text fields
+    project.title         = title         || project.title;
+    project.description   = description   || project.description;
+    project.category      = category      || project.category;
+    project.projectUrl    = projectUrl    || project.projectUrl;
+    project.sourceCodeUrl = sourceCodeUrl || project.sourceCodeUrl;
+    project.status        = status        || project.status;
+
+    // handle image update only if a new file is provided
+    const imagePath = req.file?.path;
+
+    if (imagePath) {
+        try {
+
+            // upload new image FIRST before deleting old one
+            // old code deleted first — if upload failed, image was permanently lost
+            const imageUploadResponse = await uploadImage(imagePath);
             console.log("Image upload response:", imageUploadResponse);
-            
-            if (imageUploadResponse) {
-            
-                project.imageUrl = imageUploadResponse.url;
-                project.imageId = imageUploadResponse.fileId;
-            
-            }else {
+
+            if (!imageUploadResponse) {
                 return res.status(500).json(new ApiErrorResponse(500, "Image upload failed"));
             }
 
-            await project.save();
+            // only delete old image AFTER new upload succeeds
+            if (project.imageId) {
 
+                const deleteResponse = await deleteImage(project.imageId);
+                
+                console.log("Previous image deletion response:", deleteResponse);
+                
+                if (!deleteResponse) {
+                    console.warn("Old image deletion failed for imageId:", project.imageId);
+                    // non-fatal — new image is already uploaded, log and continue
+                }
+
+            }
+
+            project.imageUrl = imageUploadResponse.url;
+            project.imageId  = imageUploadResponse.fileId;
+
+        } catch (error) {
+            console.error("Error handling image update:", error);
+            return res.status(500).json(new ApiErrorResponse(500, "Something went wrong during image update"));
         }
-
-    } catch (error) {
-        console.error("Error updating project:", error);
-        return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while updating project"));
     }
+
+    // always save — old code only called save() inside if(imagePath) block
+    // text field updates were never saved when no new image was provided
+    await project.save();
 
     return res.status(200).json(new APIResponse(200, project, "Project updated successfully"));
 
 });
 
-const deleteProject = asyncHandler( async (req, res) => {
-    
-    const projectId = req.params.id;
+const deleteProject = asyncHandler(async (req, res) => {
 
-    // validations
-    if (!projectId) {
-        return res.status(400).json(new ApiErrorResponse(400, "Project ID is required"));
-    }
+    const projectId = req.params.id;
 
     // validate project existence
     const project = await ProjectModel.findById(projectId);
+
     if (!project) {
         return res.status(404).json(new ApiErrorResponse(404, "Project not found"));
     }
 
-    // delete project
     try {
-     
+
         const projectImageId = project.imageId;
-     
-        const dbResp = await ProjectModel.findByIdAndDelete(projectId);
-     
-        // delete image from ImageKit
-        if (projectImageId && dbResp) {
+
+        // delete from DB first
+        await ProjectModel.findByIdAndDelete(projectId);
+
+        // then delete image from ImageKit — non-fatal if it fails
+        if (projectImageId) {
+           
             const deleteResponse = await deleteImage(projectImageId);
+           
             console.log("Project image deletion response:", deleteResponse);
+           
             if (!deleteResponse) {
-                return res.status(500).json(new ApiErrorResponse(500, "Project image deletion failed"));
+                console.warn("ImageKit deletion failed for imageId:", projectImageId);
+                // project is already deleted from DB — just log and continue
             }
+
         }
-        
-        // Return success response
-        return res.status(200).json(new APIResponse(200, {}, "Project deleted successfully"));
-    
+
+        return res.status(200).json(new APIResponse(200, null, "Project deleted successfully"));
+
     } catch (error) {
+        console.error("Error deleting project:", error);
         return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while deleting project"));
     }
 
@@ -185,22 +189,22 @@ const deleteProject = asyncHandler( async (req, res) => {
 
 const getAllProjects = asyncHandler(async (req, res) => {
 
-    // Fetch project from database through pagination
-    const page = parseInt(req.query.page) || 1;
+    const page  = parseInt(req.query.page)  || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
 
-    // pagination validation
+    // validate before calculating skip
     if (page < 1 || limit < 1) {
         return res.status(400).json(new ApiErrorResponse(400, "Invalid pagination parameters"));
     }
 
+    const skip = (page - 1) * limit;
+
     try {
-        
+
         const [projects, totalProjects] = await Promise.all([
-            projectModel.find().skip(skip).limit(limit).lean(),
-            projectModel.countDocuments()
-        ])
+            ProjectModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
+            ProjectModel.countDocuments()
+        ]);
 
         const totalPages = Math.ceil(totalProjects / limit);
 
@@ -219,42 +223,35 @@ const getAllProjects = asyncHandler(async (req, res) => {
         return res.status(500).json(new ApiErrorResponse(500, "Something went wrong while fetching projects"));
     }
 
-    // const projects = await ProjectModel.find();
-
-    // if (!projects || projects.length === 0) {
-    //     return res.status(404).json(new ApiErrorResponse(404, "No projects found"));
-    // }
-
-    // return res.status(200).json(new APIResponse(200, projects, "Projects fetched successfully"));
-
 });
 
-const searchProject = asyncHandler( async (req, res) => {
+const searchProject = asyncHandler(async (req, res) => {
 
     const { query } = req.params;
     console.log("Search query:", query);
 
-    if(!query || query.trim() === '') {
+    if (!query || query.trim() === '') {
         return res.status(400).json(new ApiErrorResponse(400, "Search query is required"));
     }
 
-    // pagination validation
     try {
-        // Perform case-insensitive search for projects by title
-        // lean() is used to get plain JavaScript objects instead of Mongoose documents
-        const projects = await ProjectModel.find({ title: {
-            $regex: query,
-            $options: 'i'
-        }}).lean();
 
-        // handle empty results
+        // was using findOne — returns only 1 result
+        // find() returns ALL matching projects
+        const projects = await ProjectModel.find({
+            title: {
+                $regex: query.trim(),
+                $options: 'i'
+            }
+        }).lean();
+
         if (!projects || projects.length === 0) {
             return res.status(404).json(new ApiErrorResponse(404, "No projects found matching your search"));
         }
 
-        console.log("Found projects:", projects);
-        
-        return res.status(200).json(new APIResponse(200, projects, "Project Data fetched successfully"));
+        console.log("Found projects:", projects.length);
+
+        return res.status(200).json(new APIResponse(200, projects, "Projects fetched successfully"));
 
     } catch (error) {
         console.error("Error searching projects:", error);
