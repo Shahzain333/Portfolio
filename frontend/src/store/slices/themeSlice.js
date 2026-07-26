@@ -1,8 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const saved = typeof window !== 'undefined' ? localStorage.getItem('theme') ||
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-  : 'light';
+const applyTheme = (mode) => {
+  if (mode === 'dark') document.documentElement.classList.add('dark');
+  else document.documentElement.classList.remove('dark');
+  localStorage.setItem('theme', mode);
+};
+
+const saved = typeof window !== 'undefined'
+  ? (localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches 
+  ? 'dark' : 'light')) : 'light';
+
+applyTheme(saved); // apply immediately before React renders
 
 const themeSlice = createSlice({
   name: 'theme',
@@ -11,15 +19,15 @@ const themeSlice = createSlice({
   },
   reducers: {
     toggleTheme: state => {
-      state.mode = state.mode === 'dark' ? 'light' : 'dark'
-      localStorage.setItem('theme', state.mode)
-      document.documentElement.classList.toggle('dark', state.mode === 'dark')
+      const next = state.mode === 'dark' ? 'light' : 'dark';
+      state.mode = next;
+      applyTheme(next);
     },
-    initTheme: state => {
-      document.documentElement.classList.toggle('dark', state.mode === 'dark')
+    initTheme: state => { 
+      applyTheme(state.mode); 
     }
   }
-})
+});
 
-export const { toggleTheme, initTheme } = themeSlice.actions
-export default themeSlice.reducer
+export const { toggleTheme, initTheme } = themeSlice.actions;
+export default themeSlice.reducer;

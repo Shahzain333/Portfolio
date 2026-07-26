@@ -8,12 +8,12 @@ export default defineConfig({
     react(), 
     tailwindcss()
   ],
-  server: {
-    proxy: {
-      '/api': { 
-        target: `${import.meta.env.VITE_SERVER_URL}`, 
-        changeOrigin: true 
-      }
-    }
-  }
+  // server: {
+  //   proxy: {
+  //     '/api': { 
+  //       target: `${import.meta.env.VITE_SERVER_URL}`, 
+  //       changeOrigin: true 
+  //     }
+  //   }
+  // }
 })

@@ -6,7 +6,6 @@ import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AppRouter />
     <Toaster
       position='top-right'  
       toastOptions={{
@@ -15,5 +14,6 @@ createRoot(document.getElementById('root')).render(
         success: { iconTheme: { primary: '#6366f1', secondary: '#fff' } },
       }}
     />
+    <AppRouter />
   </StrictMode>,
 )

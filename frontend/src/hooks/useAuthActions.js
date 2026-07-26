@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
-import { loginAdmin, logoutAdmin, isAdmin } from '../api/authAPI'
+import { loginAdmin, logoutAdmin, isAdmin } from '../api/authAPI.js'
 import { adminLogin, adminLogout, setAuthChecked, 
-    setLoading, setError } from '../store/slices/authSlice'
+    setLoading, setError } from '../store/slices/authSlice.js'
 import toast from 'react-hot-toast'
 
 const useAuthActions = () => {
