@@ -5,6 +5,7 @@ import { Menu, X, Code2, LayoutDashboard, LogOut } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import ThemeToggle from './ThemeToggle'
 import useAuthActions from '../hooks/useAuthActions'
+import Logo from '../components/Logo.jsx'
 
 const LINKS = [
   { to: '/',           label: 'Home'       },
@@ -70,7 +71,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
 
           {/* Brand */}
-          <Link to="/" className="flex items-center gap-2 group" onClick={() => setOpen(false)}>
+          {/* <Link to="/" className="flex items-center gap-2 group" onClick={() => setOpen(false)}>
 
             <div className="w-8 h-8 rounded-lg flex items-center justify-center 
             transition-transform group-hover:scale-110"
@@ -81,7 +82,8 @@ const Navbar = () => {
               SK_<span className="gradient-text">DEV</span>
             </span>
 
-          </Link>
+          </Link> */}
+          <Logo onClick={() => setOpen(false)} />
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-7">

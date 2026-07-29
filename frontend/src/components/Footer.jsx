@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Code2, Mail } from 'lucide-react'
+import Logo from '../components/Logo.jsx'
 
 // ── Brand SVG icons ───────────────────────────────────────────────────────────
 const GithubIcon = ({ size = 18 }) => (
@@ -123,7 +124,7 @@ export default function Footer() {
           justify-between gap-4 md:gap-8" style={{ paddingBottom: '0.8rem', paddingTop: '0.8rem' }}>
 
           {/* Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
+          {/* <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
             
             <div className="w-9 h-9 rounded-xl flex items-center justify-center
                 transition-transform group-hover:scale-110"
@@ -135,7 +136,8 @@ export default function Footer() {
               SK_<span className="gradient-text">DEV</span>
             </span>
           
-          </Link>
+          </Link> */}
+          <Logo />
 
           {/* Nav links */}
           <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
@@ -194,12 +196,15 @@ export default function Footer() {
 
         {/* ── Copyright ─────────────────────────────────────────────────── */}
         <div className="py-6 text-center" style={{ paddingBottom: '0.5rem', paddingTop: '0.5rem' }}>
-          <p className="text-xs" style={{ color: 'var(--clr-text-3)', paddingTop: '0.5rem' }}>
-            © {year} SK_Dev_Portfolio · Built with MERN Stack
+
+          <p className="text-xs" style={{ color: 'var(--clr-text-3)', paddingTop: '0.5rem', fontStyle: 'italic' }}>
+            © {year} <span className="gradient-text">SK_DEV_Portfolio</span> · Built with MERN Stack
           </p>
+        
         </div>
 
       </div>
+
     </footer>
   )
 }
