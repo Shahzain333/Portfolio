@@ -38,6 +38,7 @@ app.use('/api/v1/auth', authRoutes)
 app.use("/api/v1/projects", projectRoutes);
 app.use("/api/v1/experiences", experienceRoutes);
 app.use("/api/v1/skills", skillRoutes);
+app.use("/api/v1/upload-image", express.static("uploads")); // serves uploaded images from 'uploads' directory
 
 // Error handler 
 app.use((err, req, res, next) => {

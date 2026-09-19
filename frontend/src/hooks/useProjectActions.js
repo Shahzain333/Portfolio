@@ -1,8 +1,7 @@
 import { useDispatch } from 'react-redux'
-import { getAllProjects, searchProjects, addProject, updateProject, 
-    deleteProject, uploadImage } from '../api/projectAPI'
-import { setProjects, addProject as addPro, updateProject as updatePro, 
-    removeProject, setSearchResults, setLoading, setError } from '../store/slices/projectSlice'
+import { getAllProjects, searchProjects, addProject, updateProject, deleteProject } from '../api/projectAPI.js'
+import { setProjects, addProject as addPro, updateProject as updatePro,
+    removeProject, setSearchResults, setLoading, setError } from '../store/slices/projectSlice.js'
 import toast from 'react-hot-toast'
 
 const useProjectActions = () => {
@@ -10,36 +9,35 @@ const useProjectActions = () => {
   const dispatch = useDispatch()
 
   const fetchProjects = async (page = 1, limit = 6) => {
-    
     dispatch(setLoading(true))
-    
     try {
       const res = await getAllProjects(page, limit)
       dispatch(setProjects(res.data.data))
     } catch (err) {
       dispatch(setError(err.response?.data?.message || 'Failed to fetch projects'))
     }
-
   }
 
-  const searchProject = async (query) => {   
+  const searchProject = async (query) => {
     try {
       const res = await searchProjects(query)
-      dispatch(setSearchResults(res.data.data))
+      // backend returns array directly for search
+      dispatch(setSearchResults(Array.isArray(res.data.data) ? res.data.data : []))
     } catch {
       dispatch(setSearchResults([]))
     }
   }
 
-  const createProject = async (formData, projectData) => {
-
+  // FIX: send everything as FormData in one request
+  // Backend: POST /projects/add-project with multer upload.single('imageURL')
+  // FormData fields: title, description, category, projectUrl, sourceCodeUrl, status, imageURL (file)
+  const createProject = async (projectData, imageFile) => {
     dispatch(setLoading(true))
-    
     try {
-      // upload image first, then create project
-      const uploadRes  = await uploadImage(formData)
-      const { imageUrl, imageId } = uploadRes.data.data
-      const res = await addProject({ ...projectData, imageUrl, imageId })
+      const fd = new FormData()
+      Object.entries(projectData).forEach(([k, v]) => fd.append(k, v))
+      if (imageFile) fd.append('imageURL', imageFile)
+      const res = await addProject(fd)
       dispatch(addPro(res.data.data))
       toast.success('Project added!')
       return true
@@ -51,18 +49,14 @@ const useProjectActions = () => {
     }
   }
 
-  const editProject = async (id, formData, projectData, hasNewImage) => {
-
+  // FIX: same — FormData with optional image
+  const editProject = async (id, projectData, imageFile) => {
     dispatch(setLoading(true))
-    
     try {
-      let payload = { ...projectData }
-      if (hasNewImage) {
-        const uploadRes = await uploadImage(formData)
-        payload.imageUrl = uploadRes.data.data.imageUrl
-        payload.imageId  = uploadRes.data.data.imageId
-      }
-      const res = await updateProject(id, payload)
+      const fd = new FormData()
+      Object.entries(projectData).forEach(([k, v]) => fd.append(k, v))
+      if (imageFile) fd.append('imageURL', imageFile)
+      const res = await updateProject(id, fd)
       dispatch(updatePro(res.data.data))
       toast.success('Project updated!')
       return true

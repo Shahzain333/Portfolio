@@ -1,49 +1,49 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        admin: null,
-        isLoggedIn: false,
-        loading: false,
-        checkLoading: true,
-        error: null,
+        admin:        null,
+        isLoggedIn:   false,
+        loading:      false,
+        checkLoading: true,   // true until checkAuth() resolves
+        error:        null,
     },
     reducers: {
+
         adminLogin(state, action) {
-            state.isLoggedIn = true;
-            state.admin = action.payload;
-            state.loading = false;
-            state.error = null;
+            state.isLoggedIn   = true
+            state.admin        = action.payload
+            state.loading      = false
+            state.checkLoading = false  // also clear checkLoading on login
+            state.error        = null
         },
-        adminLogout: state => {
-            state.isLoggedIn = false;
-            state.admin = null;
-            state.checkLoading = false;
+
+        adminLogout(state) {
+            state.isLoggedIn   = false
+            state.admin        = null
+            state.checkLoading = false
         },
-        setAuthChecked: (state, action) => {
-            state.checkLoading = false;
-            state.isLoggedIn = action.payload.isLoggedIn;
-            state.admin = action.payload.admin || null;
+
+        // Called after checkAuth() resolves — MUST always be called
+        // whether session is valid or not. This is what unlocks ProtectedRoute.
+        setAuthChecked(state, action) {
+            state.checkLoading = false                    // ← unlock ProtectedRoute
+            state.isLoggedIn   = action.payload.isLoggedIn
+            state.admin        = action.payload.admin || null
         },
-        setLoading: (state, action) => { state.loading = action.payload; },
-        setError:   (state, action) => { state.error = action.payload; },
-        clearError: state => { state.error = null; },
+
+        setLoading(state, action) { state.loading = action.payload },
+        setError(state, action)   { state.error = action.payload; state.loading = false },
+        clearError(state)         { state.error = null },
     }
-});
+})
 
-// Destructure actions and reducer together
 export const {
-    adminLogin,
-    adminLogout,
-    setAuthChecked,
-    setLoading,
-    setError,
-    clearError,
-} = authSlice.actions;
+    adminLogin, adminLogout, setAuthChecked,
+    setLoading, setError, clearError,
+} = authSlice.actions
 
-// Named export - can't be confused with .reducers
-export const authReducer = authSlice.reducer;
-
-// Default export - same value, explicit variable name prevents typo
-export default authReducer;
+// Named export prevents .reducers vs .reducer typo
+export const authReducer = authSlice.reducer
+export default authReducer

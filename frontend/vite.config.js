@@ -2,18 +2,18 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(), 
-    tailwindcss()
-  ],
-  // server: {
-  //   proxy: {
-  //     '/api': { 
-  //       target: `${import.meta.env.VITE_SERVER_URL}`, 
-  //       changeOrigin: true 
-  //     }
-  //   }
-  // }
+  plugins: [react(), tailwindcss()],
+  server: {
+    port: 5173,
+    proxy: {
+      // All /api requests → backend on port 8000
+      // This is why login was 404 — proxy was commented out
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })

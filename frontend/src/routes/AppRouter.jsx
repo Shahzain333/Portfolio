@@ -21,22 +21,24 @@ import AdminProjects    from '../pages/admin/AdminProject.jsx'
 import AdminExperiences from '../pages/admin/AdminExperience.jsx'
 import AdminSkills      from '../pages/admin/adminSkill.jsx'
 
+// Runs once on mount — initialises theme + verifies session cookie
 const Init = ({ children }) => {
-
-    const dispatch    = useDispatch()
+    const dispatch      = useDispatch()
     const { checkAuth } = useAuthActions()
 
     useEffect(() => {
-        dispatch(initTheme()) 
-        checkAuth()           // runs on every reload to verify the session cookie
+        dispatch(initTheme())   // apply saved dark/light preference
+        checkAuth()             // hit /api/v1/auth/is-admin to verify cookie
+        // checkAuth always calls setAuthChecked at the end (success OR fail)
+        // which sets checkLoading=false — this is what unlocks ProtectedRoute
     }, [])
 
     return children
 }
 
 const PublicLayout = ({ children }) => (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--clr-bg)', 
-    color: 'var(--clr-text)' }}>
+    <div className="min-h-screen flex flex-col"
+        style={{ background:'var(--clr-bg)', color:'var(--clr-text)' }}>
         <Navbar />
         <main className="flex-1 pt-16">
             {children}
@@ -47,22 +49,25 @@ const PublicLayout = ({ children }) => (
 
 const AppRouter = () => (
     <Provider store={store}>
-
         <BrowserRouter>
-        
             <Init>
-        
                 <Routes>
-    
-                    {/* Public */}
+                    {/* ── Public routes ── */}
                     <Route path="/"           element={<PublicLayout><HomePage /></PublicLayout>} />
                     <Route path="/projects"   element={<PublicLayout><ProjectsPage /></PublicLayout>} />
                     <Route path="/experience" element={<PublicLayout><ExperiencePage /></PublicLayout>} />
                     <Route path="/skills"     element={<PublicLayout><SkillsPage /></PublicLayout>} />
 
-                    {/* Admin */}
+                    {/* ── Admin routes ── */}
                     <Route path="/admin/login" element={<LoginPage />} />
-                    <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+
+                    {/* All /admin/* routes are protected — ProtectedRoute checks
+                        isLoggedIn AFTER checkAuth resolves (checkLoading=false) */}
+                    <Route path="/admin" element={
+                        <ProtectedRoute>
+                            <AdminLayout />
+                        </ProtectedRoute>
+                    }>
                         <Route index                  element={<Navigate to="dashboard" replace />} />
                         <Route path="dashboard"       element={<DashboardPage />} />
                         <Route path="add-projects"    element={<AdminProjects />} />
@@ -71,13 +76,9 @@ const AppRouter = () => (
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" replace />} />
-        
                 </Routes>
-        
             </Init>
-        
         </BrowserRouter>
-
     </Provider>
 )
 

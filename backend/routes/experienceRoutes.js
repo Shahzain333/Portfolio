@@ -1,11 +1,11 @@
 import express from 'express';
-import { addExperience, updateExperience, deleteExperience, getAllExperiences } from '../controllers/experienceController.js';
+import { addExperience, updateExperience, deleteExperience, getAllExperience } from '../controllers/experienceController.js';
 import { adminOnly } from '../middlewares/authMiddlewares.js';
 
 const experienceRoutes = express.Router();
 
 // public
-experienceRoutes.get('/all-experiences', getAllExperiences);
+experienceRoutes.get('/all-experiences', getAllExperience);
 
 // admin only
 experienceRoutes.post('/add-experience', adminOnly, addExperience);

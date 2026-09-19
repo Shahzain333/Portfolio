@@ -1,6 +1,6 @@
 import multer from "multer";
 
-// only jpeg, jpg and png files are allowed
+// only common web image formats are allowed
 const fileFilter = (req, file, cb) => {
   
   console.log("file is : ", file);
@@ -8,11 +8,12 @@ const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === "image/jpeg" ||
     file.mimetype === "image/jpg" ||
-    file.mimetype === "image/png"
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/webp"
   ) {
     cb(null, true); // accept file
   } else {
-    cb(new Error("Only .jpeg, .jpg and .png files are allowed"), false);
+    cb(new Error("Only .jpeg, .jpg, .png and .webp files are allowed"), false);
   }
   
 };

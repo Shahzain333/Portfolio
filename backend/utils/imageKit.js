@@ -6,9 +6,8 @@ import path from 'path';
 dotenv.config();
 
 const imageKit = new ImageKit({
-    publicKey: `${process.env.IMAGE_KIT_PUBLIC_KEY}`,
     privateKey: `${process.env.IMAGE_KIT_PRIVATE_KEY}`,
-    urlEndpoint: `${process.env.IMAGE_KIT_URL_ENDPOINT}`
+    timeout: 30000
 });
 
 // function to upload image to ImageKit
@@ -20,11 +19,13 @@ const uploadImage = async (localFilePath) => {
 
     try {
         
-        const response = await imageKit.upload({
-            file: fs.readFileSync(localFilePath), // required
-            fileName: path.basename(localFilePath), // required - pop() is used to get the file name from the path
+        console.log("Uploading image to ImageKit:", localFilePath);
+        const response = await imageKit.files.upload({
+            file: fs.createReadStream(localFilePath),
+            fileName: path.basename(localFilePath),
             folder: "/portfolio-images/"
         });
+        console.log("ImageKit upload completed:", response.fileId);
 
         if (response) {
             // delete local file after upload
@@ -53,7 +54,7 @@ const deleteImage = async (fileId) => {
 
     try {
         
-        const response = await imageKit.deleteFile(fileId);
+        const response = await imageKit.files.delete(fileId);
         return response;
 
     } catch (error) {

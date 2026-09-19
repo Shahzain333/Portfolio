@@ -164,8 +164,8 @@ export default function Footer() {
                 ? <Icon size={16} />
                 : <Icon size={16} />
 
+              // FIX: key must NOT be inside spread object — pass directly to element
               const sharedProps = {
-                key:          label,
                 'aria-label': label,
                 title:        label,
                 className:    'w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200',
@@ -178,12 +178,12 @@ export default function Footer() {
                 onMouseLeave: onLeave,
               }
 
-              // Email uses Link (react-router handles mailto fine)
-              // External URLs use <a> with target="_blank"
+              // mailto → <a> tag (not Link — mailto is external)
+              // external URLs → <a target="_blank">
               return href.startsWith('mailto:') ? (
-                <Link to={href} {...sharedProps}>{iconEl}</Link>
+                <a key={label} href={href} {...sharedProps}>{iconEl}</a>
               ) : (
-                <a href={href} target="_blank" rel="noreferrer" {...sharedProps}>{iconEl}</a>
+                <a key={label} href={href} target="_blank" rel="noreferrer" {...sharedProps}>{iconEl}</a>
               )
             })}
 
