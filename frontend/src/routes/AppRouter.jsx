@@ -37,10 +37,16 @@ const Init = ({ children }) => {
 }
 
 const PublicLayout = ({ children }) => (
-    <div className="min-h-screen flex flex-col"
+    <div className="user-surface min-h-screen flex flex-col"
         style={{ background:'var(--clr-bg)', color:'var(--clr-text)' }}>
+        <div className="rotation-atmosphere" aria-hidden="true">
+            <div className="rotation-core" />
+            <div className="rotation-orbit rotation-orbit-a"><i /><b /></div>
+            <div className="rotation-orbit rotation-orbit-b"><i /><b /></div>
+            <div className="rotation-orbit rotation-orbit-c"><i /><b /></div>
+        </div>
         <Navbar />
-        <main className="flex-1 pt-16">
+        <main className="user-surface-content flex-1 pt-4">
             {children}
         </main>
         <Footer />

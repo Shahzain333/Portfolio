@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Pencil, Trash2, X, Check } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Check, Braces, Palette, Server, Database, Rocket, Wrench, Package, Layers3 } from 'lucide-react'
 import useSkillActions from '../../hooks/useSkillActions'
 import Loader from '../../components/Loader'
+import AdminField from '../../components/admin/AdminField'
 
 const CATS  = ['language','frontend','backend','database','devops','tools','other']
 const PROFS = ['beginner','intermediate','advanced','expert']
 const CAT_LABELS = {
-  language:'💻 Languages', frontend:'🎨 Frontend', backend:'⚙️ Backend',
-  database:'🗄️ Database',  devops:'🚀 DevOps',    tools:'🛠️ Tools',   other:'📦 Other',
+  language:'Languages', frontend:'Frontend', backend:'Backend',
+  database:'Database',  devops:'DevOps',    tools:'Tools',   other:'Other',
 }
+const CAT_ICONS = { language: Braces, frontend: Palette, backend: Server, database: Database, devops: Rocket, tools: Wrench, other: Package }
 const PROF_COLORS = {
   beginner:    { bg:'rgba(148,163,184,.12)', color:'#94a3b8' },
   intermediate:{ bg:'rgba(59,130,246,.12)',  color:'#60a5fa' },
@@ -18,27 +20,6 @@ const PROF_COLORS = {
   expert:      { bg:'rgba(168,85,247,.12)',   color:'var(--clr-accent)'  },
 }
 const EMPTY = { name:'', category:'frontend', proficiency:'intermediate', iconUrl:'' }
-
-function Field({ label, required, error, children }) {
-  return (
-    <div className="space-y-1.5">
-      <label className="block text-xs font-bold uppercase tracking-widest" style={{ color:'var(--clr-text-2)' }}>
-        {label}{required && <span style={{ color:'var(--clr-error)' }}> *</span>}
-      </label>
-      {children}
-      <AnimatePresence>
-        {error && (
-          <motion.p initial={{ opacity:0, y:-4 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}
-            className="text-xs flex items-center gap-1" style={{ color:'var(--clr-error)' }}>
-            <span className="w-3 h-3 rounded-full inline-flex items-center justify-center text-white"
-              style={{ background:'var(--clr-error)', fontSize:'8px' }}>!</span>
-            {error}
-          </motion.p>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
 
 function SkillModal({ editData, onClose, onSave, saving }) {
   const [form, setForm] = useState(editData
@@ -69,20 +50,20 @@ function SkillModal({ editData, onClose, onSave, saving }) {
   }, [])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
       style={{ background:'rgba(0,0,0,.7)', backdropFilter:'blur(8px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}>
       <motion.div initial={{ opacity:0, scale:.95 }} animate={{ opacity:1, scale:1 }}
         exit={{ opacity:0, scale:.95 }} transition={{ duration:.18 }}
-        className="card w-full max-w-md" style={{ boxShadow:'0 25px 60px rgba(0,0,0,.4)' }}>
+        className="card w-full max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto" style={{ boxShadow:'0 25px 60px rgba(0,0,0,.4)' }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom:'1px solid var(--clr-border)' }}>
-          <div>
-            <h3 className="text-lg font-extrabold" style={{ color:'var(--clr-text)' }}>
+        <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5" style={{ borderBottom:'1px solid var(--clr-border)' }}>
+          <div className="min-w-0">
+            <h3 className="text-lg font-extrabold truncate" style={{ color:'var(--clr-text)' }}>
               {editData ? 'Edit Skill' : 'Add Skill'}
             </h3>
-            <p className="text-xs mt-0.5" style={{ color:'var(--clr-text-3)' }}>
+            <p className="text-xs mt-0.5 truncate" style={{ color:'var(--clr-text-3)' }}>
               {editData ? 'Update skill details' : 'Add a technology to your stack'}
             </p>
           </div>
@@ -95,27 +76,27 @@ function SkillModal({ editData, onClose, onSave, saving }) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <Field label="Skill Name" required error={errors.name}>
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5">
+          <AdminField label="Skill Name" required error={errors.name}>
             <input className={`input ${errors.name?'error':''}`}
               placeholder="e.g. React, Node.js, Python"
               value={form.name} onChange={e => set('name', e.target.value)} />
-          </Field>
+          </AdminField>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Category" required error={errors.category}>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <AdminField label="Category" required error={errors.category}>
               <select className="input" value={form.category} onChange={e => set('category', e.target.value)}>
                 {CATS.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
-            </Field>
-            <Field label="Proficiency" required error={errors.proficiency}>
+            </AdminField>
+            <AdminField label="Proficiency" required error={errors.proficiency}>
               <select className="input" value={form.proficiency} onChange={e => set('proficiency', e.target.value)}>
                 {PROFS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
-            </Field>
+            </AdminField>
           </div>
 
-          <Field label="Icon URL (optional)">
+          <AdminField label="Icon URL (optional)">
             <input type="url" className="input" placeholder="https://cdn.example.com/icon.svg"
               value={form.iconUrl} onChange={e => set('iconUrl', e.target.value)} />
             {form.iconUrl && (
@@ -125,11 +106,11 @@ function SkillModal({ editData, onClose, onSave, saving }) {
                 Icon preview
               </div>
             )}
-          </Field>
+          </AdminField>
 
-          <div className="flex justify-end gap-3 pt-1">
-            <button type="button" onClick={onClose} className="btn btn-ghost">Cancel</button>
-            <button type="submit" disabled={saving} className="btn btn-primary">
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose} className="btn btn-ghost flex-1">Cancel</button>
+            <button type="submit" disabled={saving} className="btn btn-primary flex-1">
               {saving
                 ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving…</>
                 : <><Check size={14} /> {editData ? 'Save Changes' : 'Add Skill'}</>}
@@ -218,7 +199,7 @@ export default function AdminSkill() {
       {/* Content */}
       {loading ? <Loader /> : items.length === 0 ? (
         <div className="card p-16 text-center">
-          <div className="text-5xl mb-4">🛠️</div>
+          <Wrench size={38} className="mx-auto mb-4" style={{ color:'var(--clr-primary)' }} />
           <h3 className="font-bold text-lg mb-2" style={{ color:'var(--clr-text)' }}>No skills yet</h3>
           <p className="text-sm mb-6" style={{ color:'var(--clr-text-3)' }}>Add the technologies you work with.</p>
           <button onClick={() => { setEditData(null); setShowModal(true) }} className="btn btn-primary mx-auto">
@@ -229,8 +210,9 @@ export default function AdminSkill() {
         <div className="space-y-8">
           {sortedCats.map(cat => (
             <div key={cat}>
-              <h2 className="text-xs font-bold uppercase tracking-widest mb-4"
+              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest mb-4"
                 style={{ color:'var(--clr-text-3)' }}>
+                {(() => { const Icon = CAT_ICONS[cat] || Layers3; return <Icon size={15} style={{ color:'var(--clr-primary)' }} /> })()}
                 {CAT_LABELS[cat] || cat}
               </h2>
               <div className="flex flex-wrap gap-2">

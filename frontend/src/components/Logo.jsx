@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 const SIZES = {
   sm: { box: 'w-7 h-7',  icon: 16, text: 'text-base'  },
   md: { box: 'w-9 h-9',  icon: 18, text: 'text-lg'    },
-  lg: { box: 'w-12 h-12', icon: 24, text: 'text-2xl'  },
+  lg: { box: 'w-11 h-11', icon: 24, text: 'text-2xl'  },
 }
 
 export function Logo({ size = 'md', asLink = true, onClick }) {
@@ -16,7 +16,7 @@ export function Logo({ size = 'md', asLink = true, onClick }) {
 
       {/* Icon box */}
       <div className={`${s.box} rounded-xl flex items-center justify-center flex-shrink-0 
-      transition-transform duration-200 group-hover:scale-110`} style={{ background: 'var(--grad-primary)',
+      transition-transform duration-200 group-hover:scale-110`} style={{ background: 'linear-gradient(135deg, var(--clr-primary), var(--clr-primary-light))',
        boxShadow: 'var(--shadow-md)' }}>
 
         <Code2 size={s.icon} className="text-white" strokeWidth={2.5} />
@@ -26,10 +26,9 @@ export function Logo({ size = 'md', asLink = true, onClick }) {
       {/* Wordmark */}
       <div className="flex flex-col leading-none">
       
-        <span className={`${s.text} font-extrabold tracking-tight`}
-          style={{ color: 'var(--clr-text)', letterSpacing: '-0.03em' }}>
+        <span className={`${s.text} font-extrabold tracking-tight uppercase`}
+          style={{ color: 'var(--clr-text)', letterSpacing: '-0.03em', fontStyle: 'italic' }} >
           SK_<span className="gradient-text" style={{ fontStyle: 'italic' }}>DEV</span>
-
         </span>
 
         {/* <span className="text-[0.6rem] font-semibold tracking-[0.18em] uppercase"

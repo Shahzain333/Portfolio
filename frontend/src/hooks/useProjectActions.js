@@ -39,6 +39,7 @@ const useProjectActions = () => {
       if (imageFile) fd.append('imageURL', imageFile)
       const res = await addProject(fd)
       dispatch(addPro(res.data.data))
+      dispatch(setLoading(false))
       toast.success('Project added!')
       return true
     } catch (err) {
@@ -58,6 +59,7 @@ const useProjectActions = () => {
       if (imageFile) fd.append('imageURL', imageFile)
       const res = await updateProject(id, fd)
       dispatch(updatePro(res.data.data))
+      dispatch(setLoading(false))
       toast.success('Project updated!')
       return true
     } catch (err) {
@@ -73,6 +75,7 @@ const useProjectActions = () => {
     try {
       await deleteProject(id)
       dispatch(removeProject(id))
+      dispatch(setLoading(false))
       toast.success('Project deleted!')
       return true
     } catch (err) {

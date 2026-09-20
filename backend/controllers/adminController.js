@@ -6,7 +6,7 @@ import { generateAccessToken, generateRefreshToken } from '../utils/generateToke
 import { verifyRefreshToken } from '../utils/verifyToken.js'
 import bcrypt from 'bcryptjs'
 
-// FIX: secure:true breaks cookies on localhost (HTTP)
+// secure:true breaks cookies on localhost (HTTP)
 // Use secure only in production (HTTPS)
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -79,7 +79,7 @@ export const handleRefreshToken = asyncHandler(async (req, res) => {
     try {
         const decoded = verifyRefreshToken(token)
 
-        // FIX: verifyRefreshToken returns null on error — handle it
+        // verifyRefreshToken returns null on error — handle it
         if (!decoded) {
             return res.status(401).json(new ApiErrorResponse(401, "Invalid refresh token. Please login again."))
         }

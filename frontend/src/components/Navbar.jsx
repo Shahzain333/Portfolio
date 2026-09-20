@@ -1,192 +1,171 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Code2, LayoutDashboard, LogOut } from 'lucide-react'
-import { useSelector } from 'react-redux'
+import { Menu, X, Home, Layers, Code2, Briefcase, ArrowRight } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
-import useAuthActions from '../hooks/useAuthActions'
+import useTheme from '../hooks/useTheme'
 import Logo from '../components/Logo.jsx'
 
 const LINKS = [
-  { to: '/',           label: 'Home'       },
-  { to: '/projects',   label: 'Projects'   },
-  { to: '/skills',     label: 'Skills'     },
-  { to: '/experience', label: 'Experience' },
+  { to: '/', label: 'Home', icon: Home },
+  { to: '/projects', label: 'Projects', icon: Layers },
+  { to: '/skills', label: 'Skills', icon: Code2 },
+  { to: '/experience', label: 'Experience', icon: Briefcase },
 ]
 
 const Navbar = () => {
-  
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { logout } = useAuthActions()
-  const navigate = useNavigate()
-  const { isLoggedIn, admin } = useSelector(
-    // state => state.auth ?? { isLoggedIn: false, admin: null }
-    state => state.auth
-  )
+  const { isDark } = useTheme()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
-  // Track scroll for navbar shadow/blur
   useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 16)
-    window.addEventListener('scroll', h, { passive: true })
-    return () => window.removeEventListener('scroll', h)
+    const onScroll = () => setScrolled(window.scrollY > 18)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
- 
-  // Track screen size — close drawer when resizing to desktop
+
   useEffect(() => {
-    const h = () => {
+    const onResize = () => {
       const mobile = window.innerWidth < 768
       setIsMobile(mobile)
-      if (!mobile) setOpen(false) // auto-close drawer on desktop resize
+      if (!mobile) setOpen(false)
     }
-    window.addEventListener('resize', h)
-    return () => window.removeEventListener('resize', h)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
- 
 
-  const handleLogout = async () => {
-    await logout()
-    navigate('/')
-    setOpen(false)
-  }
+  useEffect(() => {
+    if (!open || !isMobile) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [open, isMobile])
 
   const linkCls = ({ isActive }) =>
-    `text-sm md:text-[1rem] font-medium transition-colors duration-200 ${
-    isActive ? 'text-[var(--clr-primary)]' : 
-    'text-[var(--clr-text-2)] hover:text-[var(--clr-primary)]'
-  }`
+    `relative text-sm md:text-[0.96rem] font-semibold transition-all duration-200 ${
+      isActive ? 'text-[var(--clr-primary)]' : 'text-[var(--clr-text-2)] hover:text-[var(--clr-primary)]'
+    }`
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 transition-all duration-300"
+    <>
+      <header
+      className="fixed top-0 inset-x-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled ? 'rgba(var(--clr-bg-rgb,255,255,255),.85)' : 'var(--clr-bg)',
+        background: open && isMobile
+          ? isDark ? 'rgba(6,8,22,.92)' : 'rgba(245,247,251,.92)'
+          : scrolled
+          ? isDark ? 'rgba(6, 8, 22, 0.78)' : 'rgba(245, 247, 251, 0.75)'
+          : isDark ? 'rgba(6, 8, 22, 0.82)' : 'rgba(245, 247, 251, 0.82)',
         borderBottom: scrolled ? '1px solid var(--clr-border)' : '1px solid transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        backdropFilter: 'blur(18px)',
       }}
     >
-      {/* Desktop View */}
       <div className="container-page">
 
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-18">
 
-          {/* Brand */}
-          {/* <Link to="/" className="flex items-center gap-2 group" onClick={() => setOpen(false)}>
+          <Logo size='lg' onClick={() => setOpen(false)} />
 
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center 
-            transition-transform group-hover:scale-110"
-              style={{ background: 'var(--grad-primary)' }}>
-              <Code2 size={16} className="text-white" />
-            </div>
-            <span className="font-bold text-[1.25rem]" style={{ color: 'var(--clr-text)' }}>
-              SK_<span className="gradient-text">DEV</span>
-            </span>
-
-          </Link> */}
-          <Logo onClick={() => setOpen(false)} />
-
-          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-7">
             {LINKS.map(({ to, label }) => (
               <NavLink key={to} to={to} end={to === '/'} className={linkCls}>{label}</NavLink>
             ))}
           </nav>
 
-          {/* Right actions */}
-          <div className="flex items-center gap-2">
-            
+          <div className="flex items-center gap-0 md:gap-1">
+
             <ThemeToggle />
-            
-            {/* Admin buttons — only render in DOM when NOT on mobile */}
-            {!isMobile && (
-              (isLoggedIn && admin) ? (
-                <div className="flex items-center gap-2">
-                  <Link
-                    to="/admin/dashboard"
-                    className="btn btn-sm"
-                    style={{ background: 'rgba(99,102,241,.1)', color: 'var(--clr-primary)' }}>
-                    <LayoutDashboard size={14} /> Dashboard
-                  </Link>
-                  <button onClick={handleLogout} className="btn btn-ghost btn-sm">
-                    <LogOut size={14} /> Logout
-                  </button>
-                </div>
-              ) : (
-                <Link to="/admin/login" className="btn btn-primary btn-sm">
-                  Admin
-                </Link>
-              )
-            )}
-            
-            {/* Hamburger — mobile only */}
-            <button className="md:hidden p-2 rounded-lg transition-colors" 
-            style={{ color: 'var(--clr-text-2)' }} onClick={() => setOpen(!open)}
-              aria-label="Toggle menu">
-              {open ? <X size={20} /> : <Menu size={20} />}
+
+            <button
+              className="md:hidden -ml-2 p-2.5 rounded-xl transition-colors"
+              style={{
+                color: 'var(--clr-text-2)',
+                background: 'transparent',
+                boxShadow: 'none',
+              }}
+              onClick={() => setOpen(!open)}
+              aria-label="Toggle menu"
+              aria-expanded={open}
+            >
+              {open ? <X size={24} /> : <Menu size={24} />} 
             </button>
 
           </div>
 
         </div>
-
+      
       </div>
-    
-      {/* Mobile Drawer View */}
+
       <AnimatePresence>
-        
         {open && (
-          
           <motion.div
-            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}
-            className="md:hidden overflow-hidden"
-            style={{ borderTop: '1px solid var(--clr-border)', background: 'var(--clr-bg)', 
-              paddingTop: '0.5rem', paddingBottom: '0.5rem'
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden relative w-full overflow-hidden"
+            style={{
+              borderTop: '1px solid var(--clr-border)',
+              background: isDark
+                ? 'rgba(6,8,22,.92)'
+                : 'rgba(245,247,251,.92)',
+              backdropFilter: 'blur(18px)',
+              WebkitBackdropFilter: 'blur(18px)',
             }}
           >
-        
-            <div className="container-page py-4 flex flex-col gap-3">
-        
-              {LINKS.map(({ to, label }) => (
-                <NavLink key={to} to={to} end={to === '/'} className={linkCls} 
-                onClick={() => setOpen(false)}>
-                  {label}
+            <div className="rotation-atmosphere mobile-menu-atmosphere" aria-hidden="true">
+              <div className="rotation-core" />
+              <div className="rotation-orbit rotation-orbit-a"><i /><b /></div>
+              <div className="rotation-orbit rotation-orbit-b"><i /><b /></div>
+              <div className="rotation-orbit rotation-orbit-c"><i /><b /></div>
+            </div>
+            <div className="container-page relative z-10 py-4 flex flex-col gap-2">
+              {LINKS.map(({ to, label, icon: Icon }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={to === '/'}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => `flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold transition-all ${isActive ? 'text-[var(--clr-primary)]' : 'text-[var(--clr-text-2)]'}`}
+                  style={({ isActive }) => ({
+                    background: isActive ? 'rgba(99,102,241,.12)' : 'transparent',
+                    border: `1px solid ${isActive ? 'rgba(99,102,241,.2)' : 'transparent'}`,
+                  })}
+                >
+                  <span className="flex items-center gap-3"><Icon size={18} />{label}</span>
+                  {/* <ArrowRight size={15} className="opacity-50" /> */}
                 </NavLink>
               ))}
-        
-              <div className="pt-2" style={{ borderTop: '1px solid var(--clr-border)', 
-                paddingTop: '0.5rem' }}>
-        
-                {(isLoggedIn && admin) ? (
-        
-                  <div className="flex flex-col gap-2">
-                    <Link to="/admin/dashboard" className="btn btn-sm" style={{ 
-                      background: 'rgba(99,102,241,.1)', color: 'var(--clr-primary)' }} 
-                      onClick={() => setOpen(false)}>
-                      <LayoutDashboard size={14} /> Dashboard
-                    </Link>
 
-                    <button onClick={handleLogout} className="btn btn-ghost btn-sm w-full">
-                      <LogOut size={14} /> Logout
-                    </button>
- 
-                  </div>
-                ) : (
-                  <Link to="/admin/login" className="btn btn-primary btn-md w-full" 
-                  onClick={() => setOpen(false)}>Admin Login</Link>
-                )}
-
-              </div>
-            
             </div>
-          
           </motion.div>
-        
         )}
-      
       </AnimatePresence>
 
-    </header>
+      </header>
+
+      <AnimatePresence>
+        {open && isMobile && (
+          <motion.button
+            type="button"
+            aria-label="Close menu"
+            initial={{ opacity:0 }}
+            animate={{ opacity:1 }}
+            exit={{ opacity:0 }}
+            transition={{ duration:.2 }}
+            className="fixed inset-x-0 bottom-0 top-[4.5rem] z-40 md:hidden"
+            style={{ background:'rgba(2,6,23,.52)', backdropFilter:'blur(8px)' }}
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
   )
 }
+
 export default Navbar

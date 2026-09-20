@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Pencil, Trash2, X, Check, Calendar, Briefcase } from 'lucide-react'
 import useExperienceActions from '../../hooks/useExperienceActions'
 import Loader from '../../components/Loader'
+import AdminField from '../../components/admin/AdminField'
 
 // ── Must match backend enum exactly ─────────────────────────────────────────
 const EMP_TYPES = ['full-time','part-time','internship','freelance','contract']
@@ -39,32 +40,6 @@ const duration = (start, end, isCurrent) => {
 const EMPTY = {
   companyName: '', role: '', position: '', description: '',
   startDate: '', endDate: '', employmentType: 'full-time', isCurrent: false,
-}
-
-// ── Reusable Field ────────────────────────────────────────────────────────────
-function Field({ label, required, error, hint, children }) {
-  return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold uppercase tracking-widest"
-          style={{ color:'var(--clr-text-2)' }}>
-          {label}{required && <span style={{ color:'var(--clr-error)' }}> *</span>}
-        </label>
-        {hint && <span className="text-xs" style={{ color:'var(--clr-text-3)' }}>{hint}</span>}
-      </div>
-      {children}
-      <AnimatePresence>
-        {error && (
-          <motion.p initial={{ opacity:0, y:-4 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}
-            className="text-xs flex items-center gap-1" style={{ color:'var(--clr-error)' }}>
-            <span className="w-3 h-3 rounded-full inline-flex items-center justify-center text-white"
-              style={{ background:'var(--clr-error)', fontSize:'8px' }}>!</span>
-            {error}
-          </motion.p>
-        )}
-      </AnimatePresence>
-    </div>
-  )
 }
 
 // ── Add / Edit Modal ──────────────────────────────────────────────────────────
@@ -143,23 +118,23 @@ function ExperienceModal({ editData, onClose, onSave, saving }) {
   }, [])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
       style={{ background:'rgba(0,0,0,.7)', backdropFilter:'blur(8px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}>
 
       <motion.div initial={{ opacity:0, scale:.95, y:16 }} animate={{ opacity:1, scale:1, y:0 }}
         exit={{ opacity:0, scale:.95, y:16 }} transition={{ duration:.2, ease:[.22,.68,0,1.2] }}
         className="card w-full max-w-2xl flex flex-col"
-        style={{ maxHeight:'90vh', boxShadow:'0 25px 60px rgba(0,0,0,.4)', overflow:'hidden' }}>
+        style={{ maxHeight:'calc(100dvh - 1rem)', boxShadow:'0 25px 60px rgba(0,0,0,.4)', overflow:'hidden' }}>
 
         {/* Sticky header */}
-        <div className="flex items-center justify-between px-7 py-5 flex-shrink-0"
+        <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-7 sm:py-5 flex-shrink-0"
           style={{ borderBottom:'1px solid var(--clr-border)' }}>
-          <div>
-            <h3 className="text-lg font-extrabold" style={{ color:'var(--clr-text)' }}>
+          <div className="min-w-0">
+            <h3 className="text-lg font-extrabold truncate" style={{ color:'var(--clr-text)' }}>
               {editData ? 'Edit Experience' : 'Add Experience'}
             </h3>
-            <p className="text-xs mt-0.5" style={{ color:'var(--clr-text-3)' }}>
+            <p className="text-xs mt-0.5 truncate" style={{ color:'var(--clr-text-3)' }}>
               {editData ? 'Update work experience details' : 'Add a new work experience to your timeline'}
             </p>
           </div>
@@ -174,18 +149,18 @@ function ExperienceModal({ editData, onClose, onSave, saving }) {
 
         {/* Scrollable body */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex-1 overflow-y-auto px-7 py-6"
+          <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-7 sm:py-6"
             style={{ scrollbarWidth:'thin', scrollbarColor:'var(--clr-border) transparent' }}>
-            <div className="space-y-5 pr-2">
+            <div className="space-y-5 pr-0 sm:pr-2">
 
               {/* Company + Employment type */}
-              <div className="grid sm:grid-cols-2 gap-5">
-                <Field label="Company Name" required error={errors.companyName}>
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
+                <AdminField label="Company Name" required error={errors.companyName}>
                   <input className={`input ${errors.companyName ? 'error' : ''}`}
                     placeholder="e.g. Google, Meta, Freelance"
                     value={form.companyName} onChange={e => set('companyName', e.target.value)} />
-                </Field>
-                <Field label="Employment Type" required error={errors.employmentType}>
+                </AdminField>
+                <AdminField label="Employment Type" required error={errors.employmentType}>
                   <select className="input" value={form.employmentType}
                     onChange={e => set('employmentType', e.target.value)}>
                     {EMP_TYPES.map(t => (
@@ -194,29 +169,29 @@ function ExperienceModal({ editData, onClose, onSave, saving }) {
                       </option>
                     ))}
                   </select>
-                </Field>
+                </AdminField>
               </div>
 
               {/* Role + Position */}
-              <div className="grid sm:grid-cols-2 gap-5">
-                <Field label="Role / Job Title" required error={errors.role}>
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
+                <AdminField label="Role / Job Title" required error={errors.role}>
                   <input className={`input ${errors.role ? 'error' : ''}`}
                     placeholder="e.g. Software Engineer"
                     value={form.role} onChange={e => set('role', e.target.value)} />
-                </Field>
-                <Field label="Position / Level" required error={errors.position}>
+                </AdminField>
+                <AdminField label="Position / Level" required error={errors.position}>
                   <input className={`input ${errors.position ? 'error' : ''}`}
                     placeholder="e.g. Senior, Mid-level, Intern"
                     value={form.position} onChange={e => set('position', e.target.value)} />
-                </Field>
+                </AdminField>
               </div>
 
               {/* Description */}
-              <Field label="Description" hint={`${form.description.length}/3000`}>
+              <AdminField label="Description" hint={`${form.description.length}/3000`}>
                 <textarea className="input resize-none leading-relaxed" rows={3} maxLength={3000}
                   placeholder="What did you work on? Key responsibilities and achievements…"
                   value={form.description} onChange={e => set('description', e.target.value)} />
-              </Field>
+              </AdminField>
 
               {/* Currently working toggle */}
               <div className="flex items-center gap-3 py-1">
@@ -238,16 +213,16 @@ function ExperienceModal({ editData, onClose, onSave, saving }) {
               </div>
 
               {/* Dates */}
-              <div className="grid sm:grid-cols-2 gap-5">
-                <Field label="Start Date" required error={errors.startDate}>
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
+                <AdminField label="Start Date" required error={errors.startDate}>
                   <div className="relative">
                     <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2"
                       style={{ color:'var(--clr-text-3)' }} />
                     <input type="date" className={`input pl-9 ${errors.startDate ? 'error' : ''}`}
                       value={form.startDate} onChange={e => set('startDate', e.target.value)} />
                   </div>
-                </Field>
-                <Field
+                </AdminField>
+                <AdminField
                   label={form.isCurrent ? 'End Date (not required)' : 'End Date'}
                   required={!form.isCurrent}
                   error={errors.endDate}>
@@ -261,21 +236,21 @@ function ExperienceModal({ editData, onClose, onSave, saving }) {
                       min={form.startDate || undefined}
                       value={form.endDate} onChange={e => set('endDate', e.target.value)} />
                   </div>
-                </Field>
+                </AdminField>
               </div>
 
             </div>
           </div>
 
           {/* Sticky footer */}
-          <div className="flex items-center justify-between px-7 py-4 flex-shrink-0"
+          <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7 flex-shrink-0"
             style={{ borderTop:'1px solid var(--clr-border)', background:'var(--clr-bg-card)' }}>
             <p className="text-xs" style={{ color:'var(--clr-text-3)' }}>
               Fields marked <span style={{ color:'var(--clr-error)' }}>*</span> are required
             </p>
-            <div className="flex gap-3">
-              <button type="button" onClick={onClose} className="btn btn-ghost">Cancel</button>
-              <button type="submit" disabled={saving} className="btn btn-primary">
+            <div className="flex w-full gap-3 sm:w-auto">
+              <button type="button" onClick={onClose} className="btn btn-ghost flex-1 sm:flex-none">Cancel</button>
+              <button type="submit" disabled={saving} className="btn btn-primary flex-1 sm:flex-none">
                 {saving
                   ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving…</>
                   : <><Check size={14} /> {editData ? 'Save Changes' : 'Add Experience'}</>
@@ -327,53 +302,31 @@ function ExpCard({ exp, onEdit, onDelete }) {
   return (
     <motion.div layout initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }}
       exit={{ opacity:0, scale:.97 }}
-      className="card p-5 flex items-start justify-between gap-4">
+      className="card group relative overflow-hidden p-5 transition-all"
+      style={{ borderColor: exp.isCurrent ? 'rgba(99,102,241,.38)' : 'var(--clr-border)', boxShadow: exp.isCurrent ? 'var(--shadow-md)' : 'var(--shadow-card)' }}>
 
-      {/* Left — icon */}
-      <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-        style={{ background: exp.isCurrent ? 'rgba(99,102,241,.12)' : 'var(--clr-bg-3)' }}>
-        <Briefcase size={18} style={{ color: exp.isCurrent ? 'var(--clr-primary)' : 'var(--clr-text-3)' }} />
+      <div className="flex items-start gap-3 pr-16">
+        <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: exp.isCurrent ? 'rgba(99,102,241,.12)' : 'var(--clr-bg-3)' }}>
+          <Briefcase size={18} style={{ color: exp.isCurrent ? 'var(--clr-primary)' : 'var(--clr-text-3)' }} />
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-0.5">
+            <h3 className="font-bold text-base" style={{ color:'var(--clr-text)' }}>{exp.role}</h3>
+            {exp.isCurrent && <span className="badge text-xs" style={{ background:'rgba(16,185,129,.12)', color:'var(--clr-success)', border:'1px solid rgba(16,185,129,.25)', fontSize:'0.6rem', padding:'0.1rem 0.5rem' }}><span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background:'var(--clr-success)' }} />Current</span>}
+          </div>
+          <p className="text-sm font-semibold" style={{ color:'var(--clr-primary)' }}>{exp.companyName}{exp.position && <span className="font-normal" style={{ color:'var(--clr-text-2)' }}> · {exp.position}</span>}</p>
+        </div>
       </div>
 
-      {/* Middle — details */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap mb-0.5">
-          <h3 className="font-bold text-sm" style={{ color:'var(--clr-text)' }}>{exp.role}</h3>
-          {exp.isCurrent && (
-            <span className="badge text-xs"
-              style={{ background:'rgba(16,185,129,.12)', color:'var(--clr-success)', border:'1px solid rgba(16,185,129,.25)', fontSize:'0.6rem', padding:'0.1rem 0.5rem' }}>
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block"
-                style={{ background:'var(--clr-success)' }} />
-              Current
-            </span>
-          )}
-        </div>
-        <p className="text-sm font-semibold mb-0.5" style={{ color:'var(--clr-primary)' }}>
-          {exp.companyName}
-          {exp.position && <span className="font-normal" style={{ color:'var(--clr-text-2)' }}> · {exp.position}</span>}
-        </p>
-        <div className="flex items-center gap-2 flex-wrap mt-1.5">
-          <span className="badge text-xs"
-            style={{ background:ec.bg, color:ec.color, border:`1px solid ${ec.bg}`, fontSize:'0.6rem', padding:'0.15rem 0.5rem' }}>
-            {exp.employmentType}
-          </span>
-          <span className="flex items-center gap-1 text-xs" style={{ color:'var(--clr-text-3)' }}>
-            <Calendar size={11} />
-            {fmtDate(exp.startDate)} — {exp.isCurrent ? 'Present' : fmtDate(exp.endDate)}
-            {exp.startDate && (
-              <span className="opacity-60 ml-1">· {duration(exp.startDate, exp.endDate, exp.isCurrent)}</span>
-            )}
-          </span>
-        </div>
-        {exp.description && (
-          <p className="text-xs leading-relaxed mt-2 line-clamp-2" style={{ color:'var(--clr-text-2)' }}>
-            {exp.description}
-          </p>
-        )}
+      <div className="flex items-center gap-2 flex-wrap mt-4">
+        <span className="badge text-xs" style={{ background:ec.bg, color:ec.color, border:`1px solid ${ec.bg}`, fontSize:'0.6rem', padding:'0.15rem 0.5rem' }}>{exp.employmentType}</span>
+        <span className="flex items-center gap-1 text-xs" style={{ color:'var(--clr-text-3)' }}><Calendar size={11} />{fmtDate(exp.startDate)} — {exp.isCurrent ? 'Present' : fmtDate(exp.endDate)}{exp.startDate && <span className="opacity-60 ml-1">· {duration(exp.startDate, exp.endDate, exp.isCurrent)}</span>}</span>
       </div>
 
-      {/* Right — actions */}
-      <div className="flex items-center gap-1.5 flex-shrink-0">
+      {exp.description && <div className="mt-4 pt-3" style={{ borderTop:'1px solid var(--clr-border)' }}><p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] mb-1.5" style={{ color:'var(--clr-text-3)' }}>Description</p><p className="text-sm leading-6 whitespace-pre-line" style={{ color:'var(--clr-text-2)' }}>{exp.description}</p></div>}
+
+      <div className="absolute top-4 right-4 flex items-center gap-1 sm:gap-1.5">
         <button onClick={() => onEdit(exp)}
           className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
           style={{ color:'var(--clr-text-3)', background:'var(--clr-bg-3)' }}
@@ -432,7 +385,7 @@ export default function AdminExperience() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col items-stretch gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between sm:mb-8">
         <div>
           <h1 className="text-2xl font-extrabold mb-0.5" style={{ color:'var(--clr-text)' }}>
             Experience
@@ -441,7 +394,7 @@ export default function AdminExperience() {
             {items.length} work experience{items.length !== 1 ? 's' : ''} on your timeline
           </p>
         </div>
-        <button onClick={openAdd} className="btn btn-primary">
+        <button onClick={openAdd} className="btn btn-primary w-full sm:w-auto">
           <Plus size={16} /> Add Experience
         </button>
       </div>
