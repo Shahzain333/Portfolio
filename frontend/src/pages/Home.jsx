@@ -9,9 +9,7 @@ import {
   Briefcase,
   Globe,
   ExternalLink,
-  Zap,
-  Shield,
-  Sparkles,
+  FolderOpen,
 } from 'lucide-react'
 
 import useProjectActions from '../hooks/useProjectActions'
@@ -210,11 +208,11 @@ export default function Home() {
                 mb-6
               "
               style={{
-                fontSize: 'clamp(3rem, 7vw, 6rem)',
+                fontSize: 'clamp(3rem, 7vw, 5rem)',
               }}
             >
 
-              Building
+              Building modern web experiences
 
               <motion.span
                 className="gradient-text block"
@@ -234,7 +232,7 @@ export default function Home() {
                   duration: 0.6,
                 }}
               >
-                digital experiences
+                that make an impact.
               </motion.span>
 
             </motion.h1>
@@ -246,8 +244,8 @@ export default function Home() {
               {...fd(2)}
               className="
                 leading-relaxed
-                mb-10
-                max-w-2xl
+                mb-8
+                max-w-33xl
               "
               style={{
                 fontSize: 'clamp(1.05rem, 2vw, 1.26rem)',
@@ -255,9 +253,7 @@ export default function Home() {
               }}
             >
 
-              I design and build fast, thoughtful,
-              production-ready web products that blend clean
-              code, clear UX, and real business value.
+              I’m a MERN Stack Developer focused on building fast, responsive, and scalable web applications with clean code, thoughtful user experiences, and real-world functionality.
 
             </motion.p>
 
@@ -266,7 +262,7 @@ export default function Home() {
 
             <motion.div
               {...fd(3)}
-              className="flex flex-wrap gap-3 mb-10"
+              className="flex flex-wrap gap-3 mb-8"
             >
 
               <motion.div
@@ -487,164 +483,18 @@ export default function Home() {
 
       <AboutMe />
 
-
-      {/* ====================================================
-          FEATURES
-      ==================================================== */}
-
-      <section
-        className="section-sm"
-        style={{
-          background: 'var(--clr-bg-2)',
-        }}
-      >
-
-        <div className="container-page">
-
-          <div className="grid sm:grid-cols-3 gap-5">
-
-            {[
-              {
-                icon: Zap,
-                title: 'Fast & Performant',
-                desc:
-                  'Optimized code and thoughtful architecture for quicker experiences and better UX.',
-              },
-
-              {
-                icon: Shield,
-                title: 'Secure & Reliable',
-                desc:
-                  'Robust validation and clean implementation patterns built for long-term stability.',
-              },
-
-              {
-                icon: Sparkles,
-                title: 'Clean & Scalable',
-                desc:
-                  'Readable, maintainable systems designed to grow with product and team needs.',
-              },
-
-            ].map(
-              (
-                {
-                  icon: Icon,
-                  title,
-                  desc,
-                },
-                index
-              ) => (
-
-                <motion.div
-                  key={title}
-                  initial={{
-                    opacity: 0,
-                    y: 35,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  viewport={{
-                    once: true,
-                    amount: 0.2,
-                  }}
-                  transition={{
-                    delay: index * 0.1,
-                    duration: 0.5,
-                    ease: 'easeOut',
-                  }}
-                  whileHover={{
-                    y: -8,
-                    scale: 1.02,
-                  }}
-                  className="
-                    card
-                    p-6
-                    text-center
-                    card-hover
-                  "
-                >
-
-                  <motion.div
-                    className="
-                      w-12
-                      h-12
-                      rounded-2xl
-                      flex
-                      items-center
-                      justify-center
-                      mx-auto
-                      mb-4
-                    "
-                    style={{
-                      background:
-                        'rgba(79, 70, 229, 0.08)',
-                    }}
-                    whileHover={{
-                      rotate: 8,
-                      scale: 1.12,
-                    }}
-                    transition={{
-                      type: 'spring',
-                      stiffness: 300,
-                      damping: 15,
-                    }}
-                  >
-
-                    <Icon
-                      size={22}
-                      style={{
-                        color: 'var(--clr-primary)',
-                      }}
-                    />
-
-                  </motion.div>
-
-
-                  <h3
-                    className="font-bold mb-2 text-lg"
-                    style={{
-                      color: 'var(--clr-text)',
-                    }}
-                  >
-                    {title}
-                  </h3>
-
-
-                  <p
-                    className="text-sm leading-relaxed"
-                    style={{
-                      color: 'var(--clr-text-2)',
-                    }}
-                  >
-                    {desc}
-                  </p>
-
-                </motion.div>
-
-              )
-            )}
-
-          </div>
-
-        </div>
-
-      </section>
-
-
       {/* ====================================================
           FEATURED PROJECTS
       ==================================================== */}
 
-      <section className="section">
-
+      <section className="section !pt-6 sm:!pt-8 lg:!pt-10 !pb-14">
         <div className="container-page">
 
+          {/* Header */}
           <motion.div
             initial={{
               opacity: 0,
-              y: 25,
+              y: 20,
             }}
             whileInView={{
               opacity: 1,
@@ -654,19 +504,17 @@ export default function Home() {
               once: true,
             }}
             transition={{
-              duration: 0.5,
+              duration: 0.45,
             }}
             className="
               flex
               items-end
               justify-between
-              mb-8
+              mb-7
               gap-4
             "
           >
-
             <div>
-
               <p className="section-label">
                 Portfolio
               </p>
@@ -674,70 +522,146 @@ export default function Home() {
               <h2 className="section-title">
                 Featured Projects
               </h2>
-
             </div>
 
-
-            <motion.div
-              whileHover={{
-                x: 4,
-              }}
-              transition={{
-                duration: 0.2,
-              }}
-            >
-
-              <Link
-                to="/projects"
-                className="
-                  btn
-                  btn-ghost
-                  btn-sm
-                  group
-                "
+            {/* Only show button when projects exist */}
+            {projects.length > 0 && (
+              <motion.div
+                whileHover={{
+                  x: 4,
+                }}
+                transition={{
+                  duration: 0.2,
+                }}
               >
-
-                All Projects
-
-                <ArrowRight
-                  size={14}
+                <Link
+                  to="/projects"
                   className="
-                    transition-transform
-                    duration-200
-                    group-hover:translate-x-1
+                    btn
+                    btn-ghost
+                    btn-sm
+                    group
                   "
-                />
+                >
+                  All Projects
 
-              </Link>
-
-            </motion.div>
-
+                  <ArrowRight
+                    size={14}
+                    className="
+                      transition-transform
+                      duration-200
+                      group-hover:translate-x-1
+                    "
+                  />
+                </Link>
+              </motion.div>
+            )}
           </motion.div>
 
-
+          {/* Loading */}
           {pLoad ? (
-
             <Loader />
-
           ) : projects.length === 0 ? (
 
-            <motion.p
+            /* Empty Projects State */
+            <motion.div
               initial={{
                 opacity: 0,
+                y: 15,
+                scale: 0.98,
               }}
               animate={{
                 opacity: 1,
+                y: 0,
+                scale: 1,
               }}
-              className="text-center py-16"
+              transition={{
+                duration: 0.4,
+              }}
+              className="
+                flex
+                flex-col
+                items-center
+                justify-center
+                text-center
+                min-h-[260px]
+                rounded-2xl
+                px-6
+                py-10
+              "
               style={{
-                color: 'var(--clr-text-3)',
+                background: 'var(--clr-bg-card)',
+                border: '1px solid var(--clr-border)',
+                boxShadow: 'var(--shadow-card)',
               }}
             >
-              No projects yet — add from the admin panel.
-            </motion.p>
+              {/* Icon */}
+              <motion.div
+                initial={{
+                  scale: 0.8,
+                  rotate: -5,
+                }}
+                animate={{
+                  scale: 1,
+                  rotate: 0,
+                }}
+                whileHover={{
+                  scale: 1.08,
+                  rotate: 4,
+                }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 250,
+                  damping: 18,
+                }}
+                className="
+                  w-16
+                  h-16
+                  rounded-2xl
+                  flex
+                  items-center
+                  justify-center
+                  mb-5
+                "
+                style={{
+                  background: 'rgba(79, 70, 229, 0.10)',
+                  color: 'var(--clr-primary)',
+                }}
+              >
+                <FolderOpen size={30} strokeWidth={1.8} />
+              </motion.div>
+
+              <h3
+                className="
+                  text-lg
+                  font-bold
+                  mb-2
+                "
+                style={{
+                  color: 'var(--clr-text)',
+                }}
+              >
+                Projects coming soon
+              </h3>
+
+              <p
+                className="
+                  text-sm
+                  leading-relaxed
+                  max-w-sm
+                "
+                style={{
+                  color: 'var(--clr-text-3)',
+                }}
+              >
+                I'm currently preparing some of my latest work.
+                Check back soon to explore the projects.
+              </p>
+            </motion.div>
 
           ) : (
 
+            /* Projects Grid */
             <div
               className="
                 grid
@@ -746,25 +670,20 @@ export default function Home() {
                 gap-6
               "
             >
-
               {projects
                 .slice(0, 3)
                 .map((p, i) => {
-
-                  const cats =
-                    Array.isArray(p.category)
-                      ? p.category
-                      : [p.category].filter(Boolean)
-
+                  const cats = Array.isArray(p.category)
+                    ? p.category
+                    : [p.category].filter(Boolean)
 
                   return (
-
                     <motion.div
                       key={p._id}
                       initial={{
                         opacity: 0,
-                        y: 40,
-                        scale: 0.97,
+                        y: 30,
+                        scale: 0.98,
                       }}
                       whileInView={{
                         opacity: 1,
@@ -776,13 +695,13 @@ export default function Home() {
                         amount: 0.15,
                       }}
                       transition={{
-                        delay: i * 0.1,
-                        duration: 0.5,
+                        delay: i * 0.08,
+                        duration: 0.45,
                         ease: 'easeOut',
                       }}
                       whileHover={{
-                        y: -10,
-                        scale: 1.015,
+                        y: -8,
+                        scale: 1.01,
                       }}
                       className="
                         card
@@ -792,8 +711,7 @@ export default function Home() {
                       "
                     >
 
-                      {/* Image */}
-
+                      {/* Project Image */}
                       <div
                         className="
                           relative
@@ -801,13 +719,10 @@ export default function Home() {
                           overflow-hidden
                         "
                         style={{
-                          background:
-                            'var(--grad-card)',
+                          background: 'var(--grad-card)',
                         }}
                       >
-
                         {p.imageUrl ? (
-
                           <motion.img
                             src={p.imageUrl}
                             alt={p.title}
@@ -821,35 +736,46 @@ export default function Home() {
                               group-hover:scale-110
                             "
                           />
-
                         ) : (
-
-                          <motion.div
+                          
+                          <div
                             className="
                               w-full
                               h-full
                               flex
                               items-center
                               justify-center
-                              text-5xl
                             "
-                            animate={{
-                              y: [0, -5, 0],
-                            }}
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              ease: 'easeInOut',
-                            }}
                           >
-                            🚀
-                          </motion.div>
-
+                            <motion.div
+                              whileHover={{
+                                scale: 1.1,
+                                rotate: 4,
+                              }}
+                              className="
+                                w-16
+                                h-16
+                                rounded-2xl
+                                flex
+                                items-center
+                                justify-center
+                              "
+                              style={{
+                                background:
+                                  'rgba(79, 70, 229, 0.10)',
+                                color:
+                                  'var(--clr-primary)',
+                              }}
+                            >
+                              <FolderOpen
+                                size={30}
+                                strokeWidth={1.7}
+                              />
+                            </motion.div>
+                          </div>
                         )}
 
-
                         {p.status && (
-
                           <ProjectStatusBadge
                             status={p.status}
                             className="
@@ -858,30 +784,25 @@ export default function Home() {
                               right-3
                             "
                           />
-
                         )}
-
                       </div>
 
-
-                      {/* Content */}
-
+                      {/* Project Content */}
                       <div className="p-5">
 
-                        <div
-                          className="
-                            flex
-                            flex-wrap
-                            gap-1.5
-                            mb-2.5
-                          "
-                        >
-
-                          {cats.map(
-                            (c, index) => (
-
+                        {/* Categories */}
+                        {cats.length > 0 && (
+                          <div
+                            className="
+                              flex
+                              flex-wrap
+                              gap-1.5
+                              mb-2.5
+                            "
+                          >
+                            {cats.map((c, index) => (
                               <motion.span
-                                key={c}
+                                key={`${c}-${index}`}
                                 initial={{
                                   opacity: 0,
                                   scale: 0.8,
@@ -894,8 +815,7 @@ export default function Home() {
                                   once: true,
                                 }}
                                 transition={{
-                                  delay:
-                                    index * 0.05,
+                                  delay: index * 0.05,
                                 }}
                                 whileHover={{
                                   scale: 1.05,
@@ -908,13 +828,11 @@ export default function Home() {
                               >
                                 {c}
                               </motion.span>
+                            ))}
+                          </div>
+                        )}
 
-                            )
-                          )}
-
-                        </div>
-
-
+                        {/* Title */}
                         <h3
                           className="
                             font-bold
@@ -929,7 +847,7 @@ export default function Home() {
                           {p.title}
                         </h3>
 
-
+                        {/* Description */}
                         <p
                           className="
                             text-sm
@@ -938,113 +856,91 @@ export default function Home() {
                             mb-4
                           "
                           style={{
-                            color:
-                              'var(--clr-text-2)',
+                            color: 'var(--clr-text-2)',
                           }}
                         >
                           {p.description}
                         </p>
 
+                        {/* Links */}
+                        {(p.projectUrl || p.sourceCodeUrl) && (
+                          <div
+                            className="
+                              flex
+                              gap-4
+                              pt-3
+                            "
+                            style={{
+                              borderTop:
+                                '1px solid var(--clr-border)',
+                            }}
+                          >
+                            {p.projectUrl && (
+                              <motion.a
+                                href={p.projectUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                whileHover={{
+                                  x: 3,
+                                }}
+                                whileTap={{
+                                  scale: 0.96,
+                                }}
+                                className="
+                                  flex
+                                  items-center
+                                  gap-1.5
+                                  text-xs
+                                  font-semibold
+                                "
+                                style={{
+                                  color:
+                                    'var(--clr-primary)',
+                                }}
+                              >
+                                <Globe size={12} />
+                                Live Demo
+                              </motion.a>
+                            )}
 
-                        <div
-                          className="
-                            flex
-                            gap-4
-                            pt-3
-                          "
-                          style={{
-                            borderTop:
-                              '1px solid var(--clr-border)',
-                          }}
-                        >
-
-                          {p.projectUrl && (
-
-                            <motion.a
-                              href={p.projectUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              whileHover={{
-                                x: 3,
-                              }}
-                              whileTap={{
-                                scale: 0.96,
-                              }}
-                              className="
-                                flex
-                                items-center
-                                gap-1.5
-                                text-xs
-                                font-semibold
-                              "
-                              style={{
-                                color:
-                                  'var(--clr-primary)',
-                              }}
-                            >
-
-                              <Globe size={12} />
-
-                              Live Demo
-
-                            </motion.a>
-
-                          )}
-
-
-                          {p.sourceCodeUrl && (
-
-                            <motion.a
-                              href={p.sourceCodeUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              whileHover={{
-                                x: 3,
-                              }}
-                              whileTap={{
-                                scale: 0.96,
-                              }}
-                              className="
-                                flex
-                                items-center
-                                gap-1.5
-                                text-xs
-                                font-semibold
-                              "
-                              style={{
-                                color:
-                                  'var(--clr-text-2)',
-                              }}
-                            >
-
-                              <ExternalLink
-                                size={12}
-                              />
-
-                              Source
-
-                            </motion.a>
-
-                          )}
-
-                        </div>
+                            {p.sourceCodeUrl && (
+                              <motion.a
+                                href={p.sourceCodeUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                whileHover={{
+                                  x: 3,
+                                }}
+                                whileTap={{
+                                  scale: 0.96,
+                                }}
+                                className="
+                                  flex
+                                  items-center
+                                  gap-1.5
+                                  text-xs
+                                  font-semibold
+                                "
+                                style={{
+                                  color:
+                                    'var(--clr-text-2)',
+                                }}
+                              >
+                                <ExternalLink size={12} />
+                                Source
+                              </motion.a>
+                            )}
+                          </div>
+                        )}
 
                       </div>
-
                     </motion.div>
-
                   )
-
                 })}
-
             </div>
-
           )}
-
         </div>
-
       </section>
-
 
       {/* ====================================================
           SKILLS
