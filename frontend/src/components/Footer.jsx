@@ -27,11 +27,11 @@ const FacebookIcon = ({ size = 18 }) => (
 )
 
 const SOCIALS = [
-  { label: 'Email', href: 'mailto:shahzainkhannaizi1234@gmail.com', icon: Mail, isLucide: true, hoverColor: 'var(--clr-primary)', darkHoverColor: 'var(--clr-primary)' },
-  { label: 'GitHub', href: 'https://github.com/yourusername', icon: GithubIcon, hoverColor: '#1a1a1a', darkHoverColor: '#e6edf3' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/yourusername', icon: LinkedinIcon, hoverColor: '#0a66c2', darkHoverColor: '#0a66c2' },
-  { label: 'Twitter / X', href: 'https://twitter.com/yourusername', icon: TwitterIcon, hoverColor: '#000000', darkHoverColor: '#ffffff' },
-  { label: 'Facebook', href: 'https://facebook.com/yourusername', icon: FacebookIcon, hoverColor: '#1877f2', darkHoverColor: '#1877f2' },
+  { label: 'Email', href: 'https://mail.google.com/mail/?view=cm&fs=1&to=shahzainkhannaizi1234@gmail.com', icon: Mail, isLucide: true, hoverColor: 'var(--clr-primary)', darkHoverColor: 'var(--clr-primary)' },
+  { label: 'GitHub', href: 'https://github.com/shahzain333', icon: GithubIcon, hoverColor: '#1a1a1a', darkHoverColor: '#e6edf3' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/in/shahzainkhan/', icon: LinkedinIcon, hoverColor: '#0a66c2', darkHoverColor: '#0a66c2' },
+  { label: 'Twitter / X', href: 'https://twitter.com/ShahzainKh_06', icon: TwitterIcon, hoverColor: '#000000', darkHoverColor: '#ffffff' },
+  { label: 'Facebook', href: 'https://facebook.com/shahzain.khan.786786', icon: FacebookIcon, hoverColor: '#1877f2', darkHoverColor: '#1877f2' },
 ]
 
 const NAV_LINKS = [
